@@ -1,0 +1,18 @@
+<resources>
+    <string name="app_name">ReminderApp</string>
+    <string name="sett_time">Varsayılan Hatırlatma Zamanı</string>
+    <string name="sett_freq">Varsayılan Etkinlik Tekrarı</string>
+    <string name="sett_dark">Karanlık Mod</string>
+    <string name="sett_light">Aydınlık Mod</string>
+    <string name="btn_save">Kaydet</string>
+    <string name="event_date">Tarih</string>
+    <string name="event_time">Saat</string>
+    <string name="event_label">Başlık</string>
+    <string name="event_detail">Detay</string>
+    <string name="event_remind_time">Hatırlatma Zamanı</string>
+    <string name="event_remind_freq">Hatırlatma Sıklığı</string>
+    <string name="event_freq">Etkinlik Tekrarı</string>
+    <string name="event_start">Başlangıç</string>
+    <string name="event_end">Bitiş</string>
+    <string name="event_type">Türü</string>
+</resources>
