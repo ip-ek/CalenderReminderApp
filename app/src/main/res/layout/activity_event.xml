@@ -29,6 +29,7 @@
                 android:text="@string/event_start"></TextView>
 
             <TextView
+                android:id="@+id/event_start_date"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_margin="20dp"
@@ -38,6 +39,7 @@
                 android:textSize="20sp"></TextView>
 
             <TextView
+                android:id="@+id/event_start_time"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_margin="20dp"
@@ -55,6 +57,7 @@
                 android:text="@string/event_end"></TextView>
 
             <TextView
+                android:id="@+id/event_end_date"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="20dp"
@@ -65,6 +68,7 @@
                 android:textSize="20sp"></TextView>
 
             <TextView
+                android:id="@+id/event_end_time"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="20dp"
@@ -90,8 +94,9 @@
                 android:layout_gravity="center_vertical">
             </TextView>
             <Spinner
-                android:layout_marginStart="20dp"
-                android:layout_width="50dp"
+                android:id="@+id/event_freq_spin"
+                android:layout_marginStart="40dp"
+                android:layout_width="130dp"
                 android:layout_height="wrap_content"
                 android:spinnerMode="dropdown">
 
@@ -112,6 +117,7 @@
                 android:layout_gravity="center_vertical">
             </TextView>
             <TextView
+                android:id="@+id/event_remind_time"
                 android:background="@color/colorPrimary"
                 android:text="none"
                 android:layout_gravity="center"
@@ -136,13 +142,15 @@
                 >
             </TextView>
             <Spinner
+                android:id="@+id/event_type_spin"
                 android:layout_weight="5"
                 android:layout_width="50dp"
                 android:layout_height="wrap_content">
             </Spinner>
             <ImageView
+                android:id="@+id/event_color"
                 android:layout_weight="1"
-                android:layout_gravity="right"
+                android:layout_gravity="right|center_vertical"
                 android:src="@drawable/event_color"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content">
@@ -163,6 +171,7 @@
             android:background="#FFFF"
             android:orientation="vertical">
             <EditText
+                android:id="@+id/event_header"
                 android:layout_marginTop="10dp"
                 android:layout_marginStart="20dp"
                 android:layout_marginEnd="20sp"
@@ -172,6 +181,7 @@
                 android:textSize="20sp">
             </EditText>
             <EditText
+                android:id="@+id/event_content"
                 android:layout_marginLeft="20dp"
                 android:layout_marginRight="20dp"
                 android:hint="@string/event_detail"
@@ -186,13 +196,16 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content">
                 <ImageView
+                    android:id="@+id/loc_delete_img"
                     android:layout_weight="0.5"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_gravity="center_vertical"
+                    android:clickable="true"
                     android:src="@drawable/event_delete">
                 </ImageView>
                 <TextView
+                    android:id="@+id/event_loc"
                     android:layout_gravity="center_vertical"
                     android:text=""
                     android:layout_weight="10"
@@ -202,9 +215,11 @@
                     android:textSize="20sp">
                 </TextView>
                 <ImageView
+                    android:id="@+id/event_loc_img"
                     android:layout_weight="0.5"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    android:clickable="true"
                     android:src="@drawable/event_loc">
                 </ImageView>
 
@@ -216,14 +231,14 @@
             android:layout_height="match_parent"
             android:background="@color/colorPrimary">
             <Button
+                android:id="@+id/event_save"
                 android:layout_marginTop="10dp"
                 android:text="@string/btn_save"
-                android:layout_gravity="|center_horizontal|center_vertical"
+                android:layout_gravity="center_horizontal|center_vertical"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content">
             </Button>
         </LinearLayout>
-
     </LinearLayout>
 
 </LinearLayout>

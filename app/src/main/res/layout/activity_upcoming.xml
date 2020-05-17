@@ -10,7 +10,6 @@
 
     <LinearLayout
         android:id="@+id/upcome_statistic"
-        android:layout_weight="0.4"
         android:orientation="vertical"
         android:layout_margin="15dp"
         android:layout_width="match_parent"
@@ -21,6 +20,7 @@
             android:orientation="horizontal"
             android:layout_marginBottom="20dp">
             <TextView
+                android:id="@+id/current_date"
                 android:layout_weight="1"
                 android:text="tarih"
                 android:textSize="20sp"
@@ -29,10 +29,12 @@
 
             </TextView>
             <TextView
+                android:id="@+id/go_date"
                 android:gravity="right"
                 android:layout_weight="1"
-                android:text="tarihe git"
+                android:text="Tarihe git"
                 android:textSize="20sp"
+                android:clickable="true"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content">
 
@@ -44,24 +46,32 @@
             android:columnCount="2"
             android:rowCount="2">
             <CheckBox
+                android:id="@+id/cb_event"
                 android:text="Etkinlik"
+                android:checked="true"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="10dp"
                 ></CheckBox>
             <CheckBox
-                android:text="Etkinlik"
+                android:id="@+id/cb_bday"
+                android:text="Doğum Günü"
+                android:checked="true"
                 android:layout_marginStart="20dp"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 ></CheckBox>
             <CheckBox
-                android:text="Etkinlik"
+                android:id="@+id/cb_meeting"
+                android:text="Toplantı"
+                android:checked="true"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 ></CheckBox>
             <CheckBox
-                android:text="Etkinlik"
+                android:id="@+id/cb_aniversary"
+                android:text="Yıldönümü"
+                android:checked="true"
                 android:layout_marginStart="20dp"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -75,7 +85,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
         <androidx.recyclerview.widget.RecyclerView
-            android:id="@+id/person_rcy"
+            android:id="@+id/event_rcy"
             android:layout_margin="15dp"
             android:layout_width="match_parent"
             android:layout_height="match_parent" >
