@@ -1,8 +1,12 @@
 package com.ipk.reminderapp;
 
 import android.content.Context;
+import android.content.Intent;
 import android.content.SharedPreferences;
+import android.media.RingtoneManager;
+import android.net.Uri;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
@@ -19,9 +23,9 @@ import androidx.appcompat.app.AppCompatActivity;
 
 public class SettingsActivity extends AppCompatActivity {
     Spinner timeSpin, freqSpin;
-    Button btnSave;
+    Button btnSave, btnRingTone;
     Switch modeSwitch;
-    TextView modeText;
+    TextView modeText, ringTone;
 
     ArrayList<String> timeArr = new ArrayList<String>();
     ArrayList<String> freqArr = new ArrayList<>();
@@ -34,11 +38,17 @@ public class SettingsActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_settings);
 
-        freqSpin=findViewById(R.id.sett_freq);
-        timeSpin=findViewById(R.id.sett_time);
-        btnSave=findViewById(R.id.sett_save);
-        modeSwitch=findViewById(R.id.sett_switch);
-        modeText=findViewById(R.id.sett_mode);
+        freqSpin = findViewById(R.id.sett_freq);
+        timeSpin = findViewById(R.id.sett_time);
+        btnSave = findViewById(R.id.sett_save);
+        modeSwitch = findViewById(R.id.sett_switch);
+        modeText = findViewById(R.id.sett_mode);
+        btnRingTone =findViewById(R.id.sett_btn_ringtone);
+        ringTone =findViewById(R.id.sett_ringtone);
+
+        //default olan TODO: shareddan alınacak :)
+        Uri alarmUri = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION);
+        ringTone.setText(alarmUri.toString());
 
         sharedPreferences = getSharedPreferences("myPref", Context.MODE_PRIVATE);
         modeSwitch.setChecked(sharedPreferences.getBoolean("Mode", false));
@@ -46,9 +56,9 @@ public class SettingsActivity extends AppCompatActivity {
         setTimeArr();
         setFreqArr();
 
-        timeAdapter= new ArrayAdapter(this, R.layout.support_simple_spinner_dropdown_item, timeArr);
+        timeAdapter = new ArrayAdapter(this, R.layout.support_simple_spinner_dropdown_item, timeArr);
         timeSpin.setAdapter(timeAdapter);
-        freqAdapter= new ArrayAdapter(this, R.layout.support_simple_spinner_dropdown_item, freqArr);
+        freqAdapter = new ArrayAdapter(this, R.layout.support_simple_spinner_dropdown_item, freqArr);
         freqSpin.setAdapter(freqAdapter);
 
         timeSpin.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
@@ -75,12 +85,29 @@ public class SettingsActivity extends AppCompatActivity {
             }
         });
 
+        btnRingTone.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                //ringtone manager
+
+                final Uri currentTone = RingtoneManager.getActualDefaultRingtoneUri(SettingsActivity.this, RingtoneManager.TYPE_NOTIFICATION);
+                Intent intent = new Intent(RingtoneManager.ACTION_RINGTONE_PICKER);
+                intent.putExtra(RingtoneManager.EXTRA_RINGTONE_TYPE, RingtoneManager.TYPE_NOTIFICATION);
+                intent.putExtra(RingtoneManager.EXTRA_RINGTONE_TITLE, "Select Tone");
+                intent.putExtra(RingtoneManager.EXTRA_RINGTONE_EXISTING_URI, currentTone);
+                intent.putExtra(RingtoneManager.EXTRA_RINGTONE_SHOW_SILENT, false);
+                intent.putExtra(RingtoneManager.EXTRA_RINGTONE_SHOW_DEFAULT, true);
+                startActivityForResult(intent, 999);
+            }
+        });
+
+
         modeSwitch.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if(modeSwitch.isChecked()){
+                if (modeSwitch.isChecked()) {
                     modeText.setText(R.string.sett_dark);
-                }else{
+                } else {
                     modeText.setText(R.string.sett_light);
                 }
             }
@@ -93,13 +120,36 @@ public class SettingsActivity extends AppCompatActivity {
                 editor.putBoolean("Mode", modeSwitch.isChecked());
                 editor.apply();
                 editor.commit();
-                Toast.makeText(getApplicationContext(),"Kaydedildi",Toast.LENGTH_LONG).show();
+                Toast.makeText(getApplicationContext(), "Kaydedildi", Toast.LENGTH_LONG).show();
             }
         });
 
     }
 
-    public void setTimeArr(){
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+        if (requestCode == 999) {
+            if (resultCode == RESULT_OK) {
+                Uri uri = data.getParcelableExtra(RingtoneManager.EXTRA_RINGTONE_PICKED_URI);
+                if (uri != null) {
+                    String ringTonePath = uri.toString();
+                    RingtoneManager.setActualDefaultRingtoneUri(SettingsActivity.this, RingtoneManager.TYPE_NOTIFICATION, uri);
+                    Log.d("takip", "Ringtone:" + ringTonePath);
+                    ringTone.setText(ringTonePath);
+                    //TODO: ringtonePath ekrana alındığı yazılsın
+                    /*Uri alarmUri = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION);
+                    Ringtone ringtone = RingtoneManager.getRingtone(getBaseContext(), alarmUri);
+                    ringtone.play();  */
+                    //bu da defaultunun çalışma hali
+                }
+            } else {
+                Toast.makeText(getApplicationContext(), "Zil sesi alınamadı", Toast.LENGTH_LONG).show();
+            }
+        }
+        super.onActivityResult(requestCode, resultCode, data);
+    }
+
+    public void setTimeArr() {
         //strings'ten çekmelisin
         timeArr.add("Hiçbir zaman");
         timeArr.add("0 dakika önce");
@@ -112,7 +162,12 @@ public class SettingsActivity extends AppCompatActivity {
         timeArr.add("2 gün önce");
         timeArr.add("1 hafta önce");
     }
-    public void setFreqArr(){
-        freqArr.add("");
+
+    public void setFreqArr() {
+        freqArr.add("Yok");
+        freqArr.add("Her Gün");
+        freqArr.add("Her Hafta");
+        freqArr.add("Her Ay");
+        freqArr.add("Her Yıl");
     }
 }

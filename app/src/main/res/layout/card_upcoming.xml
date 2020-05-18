@@ -1,89 +1,116 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:orientation="horizontal"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
-    android:background="#FFFFFF"
-    android:layout_height="wrap_content">
-    <LinearLayout
-        android:id="@+id/event_card"
-        android:clickable="true"
-        android:layout_weight="9"
-        android:orientation="vertical"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content">
-        <GridLayout
+    android:layout_height="wrap_content"
+    android:elevation="5dp"
+    android:orientation="horizontal">
+
+    <androidx.cardview.widget.CardView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:background="@color/white"
+        android:layout_marginStart="15dp"
+        android:layout_marginEnd="15dp"
+        android:layout_marginBottom="8dp"
+        app:cardCornerRadius="10dp"
+        app:cardElevation="5dp">
+
+        <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:columnCount="2"
-            android:rowCount="3">
-            <ImageView
-                android:layout_gravity="center"
-                android:layout_marginEnd="5dp"
+            android:orientation="horizontal">
+
+            <LinearLayout
+                android:id="@+id/card_event_layout"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:src="@drawable/event_color">
-            </ImageView>
-            <TextView
-                android:id="@+id/upcome_type"
-                android:textSize="20sp"
-                android:hint="görev"
-                android:layout_margin="5dp"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content">
-            </TextView>
-            <LinearLayout>
-                <!--burda check image vardı zaman kalırsa yine ekle-->
-            </LinearLayout>
-            <TextView
-                android:id="@+id/upcome_label"
-                android:textSize="20sp"
-                android:hint="ödev teslimi"
-                android:layout_margin="5dp"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content">
+                android:layout_weight="9"
+                android:clickable="true"
+                android:orientation="vertical">
 
-            </TextView>
-            <LinearLayout>
+                <GridLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:columnCount="2"
+                    android:rowCount="3">
+
+                    <ImageView
+                        android:id="@+id/card_event_color"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center"
+                        android:layout_marginEnd="5dp"
+                        android:src="@drawable/event_color"></ImageView>
+
+                    <TextView
+                        android:id="@+id/card_upcome_type"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_margin="5dp"
+                        android:hint="görev"
+                        android:textSize="20sp"></TextView>
+
+                    <LinearLayout>
+                        <!--burda check image vardı zaman kalırsa yine ekle-->
+                    </LinearLayout>
+
+                    <TextView
+                        android:id="@+id/card_upcome_label"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_margin="5dp"
+                        android:hint="ödev teslimi"
+                        android:textSize="20sp">
+
+                    </TextView>
+
+                    <LinearLayout></LinearLayout>
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal">
+
+                        <TextView
+                            android:id="@+id/card_upcome_date"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_margin="5dp"
+                            android:hint="22/10/2020"
+                            android:textSize="20sp"></TextView>
+
+                        <TextView
+                            android:id="@+id/card_upcome_time"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginStart="15dp"
+                            android:layout_marginTop="5dp"
+                            android:hint="15:22"
+                            android:textSize="20sp"></TextView>
+                    </LinearLayout>
+                </GridLayout>
             </LinearLayout>
+
             <LinearLayout
-                android:layout_height="wrap_content"
-                android:layout_width="match_parent"
-                android:orientation="horizontal">
-                <TextView
-                    android:id="@+id/upcome_date"
-                    android:hint="22/10/2020"
-                    android:textSize="20sp"
-                    android:layout_margin="5dp"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content">
-                </TextView>
-                <TextView
-                    android:id="@+id/upcome_time"
-                    android:hint="15:22"
-                    android:textSize="20sp"
-                    android:layout_marginStart="15dp"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:layout_weight="0.3"
+                android:orientation="vertical">
+
+                <ImageView
+                    android:id="@+id/event_card_option"
+                    android:clickable="true"
                     android:layout_marginTop="5dp"
                     android:layout_width="wrap_content"
-                    android:layout_height="wrap_content">
-                </TextView>
+                    android:layout_height="wrap_content"
+                    android:src="@drawable/event_more"></ImageView>
             </LinearLayout>
-        </GridLayout>
-    </LinearLayout>
+        </LinearLayout>
 
-    <LinearLayout
-        android:id="@+id/event_card_option"
-        android:layout_weight="0.3"
-        android:clickable="true"
-        android:layout_width="wrap_content"
-        android:layout_height="match_parent"
-        android:orientation="vertical">
-        <ImageView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:src="@drawable/event_more">
-        </ImageView>
-    </LinearLayout>
 
+    </androidx.cardview.widget.CardView>
 
 
 </LinearLayout>

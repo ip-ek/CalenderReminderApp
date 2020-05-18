@@ -18,6 +18,7 @@ import android.view.KeyEvent;
 import android.view.View;
 import android.view.WindowManager;
 import android.view.inputmethod.EditorInfo;
+import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -64,8 +65,12 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
         init();
     }
 
+    Button btnSendAdr;
+
     private EditText searchText;
     private ImageView currLoc;
+
+    public String lastAdr=null;
 
     private  boolean permissionBool=false;
     private GoogleMap myMap;
@@ -79,6 +84,18 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
         currLoc=findViewById(R.id.address_current_btn);
 
         getLocPermission();
+
+        btnSendAdr=findViewById(R.id.address_send_btn);
+        btnSendAdr.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent=new Intent();
+                Log.d("takip", lastAdr);
+                intent.putExtra("adr", lastAdr);
+                setResult(RESULT_OK, intent);
+                finish();
+            }
+        });
 
     }
 
@@ -117,7 +134,7 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
         }
         if(list.size()>0){
             Address address=list.get(0);    //arama sonucu gelen adres burada
-
+            lastAdr=address.getAddressLine(0);    //kullanmalık   lastAdr.getAddressLine()
             moveCamera(new LatLng(address.getLatitude(),address.getLongitude()), 15f, address.getAddressLine(0 ));
         }
     }
@@ -133,7 +150,18 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
                     public void onComplete(@NonNull Task task) {
                         if(task.isSuccessful()){
                             Location currentLoc=(Location) task.getResult();
-                            moveCamera(new LatLng(currentLoc.getLatitude(), currentLoc.getLongitude()), 15f, "Konumum");
+                            //lokasyon adresini alıyoruz
+                            Geocoder geocoder;
+                            List<Address> addresses;
+                            geocoder = new Geocoder(MapActivity.this);
+                            try{
+                                addresses = geocoder.getFromLocation(currentLoc.getLatitude(), currentLoc.getLongitude(), 1);
+                                lastAdr= addresses.get(0).getAddressLine(0);
+                            }catch (Exception e){
+                                e.printStackTrace();
+                            }
+
+                            moveCamera(new LatLng(currentLoc.getLatitude(), currentLoc.getLongitude()), 15f, lastAdr/*"Konumum"*/);
                         }else{
                             }
                     }
@@ -148,10 +176,10 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
     private void moveCamera(LatLng latLng, float zoom , String title){
         myMap.moveCamera(CameraUpdateFactory.newLatLngZoom(latLng,zoom));
 
-        if(!title.equals("Konumum")){
+        //if(!title.equals("Konumum")){
             MarkerOptions options = new MarkerOptions().position(latLng).title(title);
             myMap.addMarker(options);   //ilgili yere marker konuldu
-        }
+        //}
         //hideSoftKeyboard();
     }
 

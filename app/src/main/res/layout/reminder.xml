@@ -1,0 +1,145 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/colorPrimary"
+    android:orientation="vertical">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_margin="20dp"
+        android:orientation="vertical">
+        <TextView
+            android:gravity="center"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="15dp"
+            android:text="Hatırlatma Zamanı"
+            android:textColor="@color/black"
+            android:textSize="25sp" />
+        <GridLayout
+            android:layout_gravity="center"
+            android:layout_weight="5"
+            android:columnCount="2"
+            android:rowCount="5"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content">
+            <CheckBox
+                android:id="@+id/c_none"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Hiçbir zaman"
+                android:textColor="@color/black"
+                android:textSize="15sp" />
+
+            <CheckBox
+                android:id="@+id/c_1hour"
+                android:layout_marginStart="20dp"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="1 saat önce"
+                android:textColor="@color/black"
+                android:textSize="15sp" />
+
+            <CheckBox
+                android:id="@+id/c_0min"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="0 dakika önce"
+                android:textColor="@color/black"
+                android:textSize="15sp" />
+
+            <CheckBox
+                android:id="@+id/c_4hour"
+                android:layout_marginStart="20dp"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="4 saat önce"
+                android:textColor="@color/black"
+                android:textSize="15sp" />
+
+            <CheckBox
+                android:id="@+id/c_5min"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="5 dakika önce"
+                android:textColor="@color/black"
+                android:textSize="15sp" />
+
+            <CheckBox
+                android:id="@+id/c_1day"
+                android:layout_marginStart="20dp"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="1 gün önce"
+                android:textColor="@color/black"
+                android:textSize="15sp" />
+
+            <CheckBox
+                android:id="@+id/c_15min"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="15 dakika önce"
+                android:textColor="@color/black"
+                android:textSize="15sp" />
+
+            <CheckBox
+                android:id="@+id/c_2day"
+                android:layout_marginStart="20dp"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="2 gün önce"
+                android:textColor="@color/black"
+                android:textSize="15sp" />
+
+            <CheckBox
+                android:id="@+id/c_30min"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="30 dakika önce"
+                android:textColor="@color/black"
+                android:textSize="15sp" />
+
+            <CheckBox
+                android:id="@+id/c_1week"
+                android:layout_marginStart="20dp"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="1 hafta önce"
+                android:textColor="@color/black"
+                android:textSize="15sp" />
+        </GridLayout>
+
+        <LinearLayout
+            android:layout_weight="5"
+            android:layout_marginTop="20dp"
+            android:layout_marginBottom="10dp"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+            <TextView
+                android:text="Tekrar Sayısı"
+                android:gravity="center"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textSize="20sp"
+                android:layout_gravity="center"/>
+            <NumberPicker
+                android:id="@+id/number_picker"
+                android:layout_gravity="center"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                />
+        </LinearLayout>
+
+        <Button
+            android:text="Seç"
+            android:layout_gravity="center|bottom"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"/>
+
+    </LinearLayout>
+
+
+</LinearLayout>

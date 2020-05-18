@@ -21,7 +21,7 @@
         android:layout_marginTop="10dp"
         android:layout_marginEnd="10dp"
         android:elevation="10dp"
-        android:background="@color/white"
+        android:background="#FFFFFF"
         android:id="@+id/address_search_label">
 
         <ImageView
@@ -61,5 +61,15 @@
         android:scaleType="centerCrop"
         android:id="@+id/address_current_btn"
         android:src="@drawable/adr_curr"/>
-
+    <Button
+        android:text="Adresi Onayla"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/address_search_label"
+        android:layout_alignParentEnd="false"
+        android:layout_marginStart="10dp"
+        android:layout_marginEnd="10dp"
+        android:layout_marginTop="10dp"
+        android:scaleType="centerCrop"
+        android:id="@+id/address_send_btn"/>
 </RelativeLayout>

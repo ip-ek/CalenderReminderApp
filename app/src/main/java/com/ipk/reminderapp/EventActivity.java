@@ -1,19 +1,25 @@
 package com.ipk.reminderapp;
 
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.app.DatePickerDialog;
 import android.app.Dialog;
 import android.app.TimePickerDialog;
 import android.content.Intent;
+import android.location.Address;
 import android.os.Bundle;
+import android.text.format.DateUtils;
+import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.widget.CheckBox;
 import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.NumberPicker;
 import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.TimePicker;
@@ -23,8 +29,12 @@ import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GoogleApiAvailability;
 
 import java.sql.Time;
+import java.text.DateFormat;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Date;
 
 public class EventActivity extends AppCompatActivity {
     TextView startDate, startTime, endDate, endTime, remindTime, eventLoc;
@@ -47,7 +57,7 @@ public class EventActivity extends AppCompatActivity {
         setContentView(R.layout.activity_event);
 
         describe();
-        int startYear,startMonth,startDay,endYear,endMonth,endDay,startHour,startMin,endHour,endMin;
+        remindEvent();
 
         startDate.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -61,8 +71,16 @@ public class EventActivity extends AppCompatActivity {
                 datePickerDialog= new DatePickerDialog(EventActivity.this, new DatePickerDialog.OnDateSetListener(){
                     @Override
                     public void onDateSet(DatePicker view, int year, int month, int dayOfMonth) {
-                        startDate.setText(dayOfMonth+"/"+month+"/"+year);
-                        endDate.setText(dayOfMonth+"/"+month+"/"+year);
+                        startDate.setText(String.format("%02d/%02d/%04d",dayOfMonth, month+1, year));
+                        endDate.setText(String.format("%02d/%02d/%04d",dayOfMonth, month+1, year));
+                        DateFormat sdf = new SimpleDateFormat("hh:mm");
+                        Calendar now = Calendar.getInstance();
+                        Date time = now.getTime();
+                        startTime.setText(sdf.format(time));
+                        now.add(Calendar.MINUTE, 30);
+                        Date newTime = now.getTime();
+                        endTime.setText(sdf.format(newTime));
+
                     }
                 }, year, month,day);
                 datePickerDialog.setButton(DatePickerDialog.BUTTON_POSITIVE, "Ayarla", datePickerDialog);
@@ -82,12 +100,12 @@ public class EventActivity extends AppCompatActivity {
                 timePickerDialog=new TimePickerDialog(EventActivity.this, new TimePickerDialog.OnTimeSetListener() {
                     @Override
                     public void onTimeSet(TimePicker view, int hourOfDay, int minute) {
-                        startTime.setText(hourOfDay+":"+minute);
+                        startTime.setText(String.format("%02d:%02d", hourOfDay, minute));
                         if(hourOfDay==23){
-                            endTime.setText("00"+":"+minute);
+                            endTime.setText(String.format("%02d:%02d",0,minute));
                             //endDate.setText(startDate.getText().charAt(1)=);
                         }else{
-                            endTime.setText((hourOfDay+1)+":"+minute);
+                            endTime.setText(String.format("%02d:%02d",(hourOfDay+1),minute));
                         }
 
                     }
@@ -106,13 +124,27 @@ public class EventActivity extends AppCompatActivity {
                int month= currentDate.get(Calendar.MONTH);
                int day= currentDate.get(Calendar.DAY_OF_MONTH);
 
+
                DatePickerDialog datePickerDialog;
                datePickerDialog= new DatePickerDialog(EventActivity.this, new DatePickerDialog.OnDateSetListener(){
                    @Override
                    public void onDateSet(DatePicker view, int year, int month, int dayOfMonth) {
-                       endDate.setText(dayOfMonth+"/"+month+"/"+year);
+
+                       endDate.setText(String.format("%02d/%02d/%04d",dayOfMonth, month+1, year));    //04d = 4 basamaklı
                    }
                }, year, month,day);
+
+               SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
+               Calendar c = Calendar.getInstance();
+               try{
+                   c.setTime(sdf.parse(startDate.getText().toString()));
+                   Log.d("takip", ""+c);
+                   Log.d("takip", startDate.getText().toString());
+               }catch (ParseException e) {
+                   e.printStackTrace();
+               }
+               datePickerDialog.getDatePicker().setMinDate(c.getTimeInMillis());
+
                datePickerDialog.setButton(DatePickerDialog.BUTTON_POSITIVE, "Ayarla", datePickerDialog);
                datePickerDialog.setButton(DatePickerDialog.BUTTON_NEGATIVE, "İptal", datePickerDialog);
                datePickerDialog.show();
@@ -130,19 +162,12 @@ public class EventActivity extends AppCompatActivity {
                 timePickerDialog=new TimePickerDialog(EventActivity.this, new TimePickerDialog.OnTimeSetListener() {
                     @Override
                     public void onTimeSet(TimePicker view, int hourOfDay, int minute) {
-                        endTime.setText(hour+":"+minute);
+                        endTime.setText(String.format("%02d:%02d", hour,minute));
                     }
                 },hour,minute,true);
                 timePickerDialog.setButton(TimePickerDialog.BUTTON_NEGATIVE, "İptal", timePickerDialog);
                 timePickerDialog.setButton(TimePickerDialog.BUTTON_POSITIVE, "Ayarla", timePickerDialog);
                 timePickerDialog.show();
-            }
-        });
-
-        remindTime.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                //ekran mı pop-up mı
             }
         });
 
@@ -152,7 +177,7 @@ public class EventActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 //visibilitysi ayarlanacak. visible değilken basılmaz
-
+                eventLoc.setText("");
                 locDelete.setVisibility(View.INVISIBLE);
             }
         });
@@ -162,8 +187,7 @@ public class EventActivity extends AppCompatActivity {
                 @Override
                 public void onClick(View v) {
                     Intent intent=new Intent(EventActivity.this,MapActivity.class);
-                    startActivity(intent);
-                    locDelete.setVisibility(View.VISIBLE);
+                    startActivityForResult(intent, 123);
                 }
             });
         }
@@ -179,6 +203,20 @@ public class EventActivity extends AppCompatActivity {
             }
         });
 
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+        if(requestCode==123){
+            if(resultCode==RESULT_OK){
+                eventLoc.setText(data.getStringExtra("adr"));
+                Log.d("takip", eventLoc.getText().toString());
+                locDelete.setVisibility(View.VISIBLE);
+            }else if(resultCode==RESULT_CANCELED){
+                Toast.makeText(getApplicationContext(),"Konum Alınamadı", Toast.LENGTH_LONG).show();
+            }
+        }
+        super.onActivityResult(requestCode, resultCode, data);
     }
 
     private void describe(){
@@ -233,6 +271,20 @@ public class EventActivity extends AppCompatActivity {
         typeArr.add("Toplantı");
         typeArr.add("Doğum Günü");
         typeArr.add("Yıldönümü");
+    }
+
+    public void remindEvent(){
+        remindTime.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent=new Intent(EventActivity.this, ReminderActivity.class);
+                startActivity(intent);
+                /*TODO:
+                   yazı yerine switch-case koyabilirsin daha güzel olur*/
+            }
+        });
+
+
     }
 
     public boolean isServicesOkey(){

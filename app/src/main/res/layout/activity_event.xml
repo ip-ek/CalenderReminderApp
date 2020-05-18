@@ -12,7 +12,7 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:orientation="vertical"
-        android:background="#FFFFFF">
+        android:background="@color/white">
 
         <GridLayout
             android:layout_width="match_parent"
@@ -168,7 +168,7 @@
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:background="#FFFF"
+            android:background="@color/white"
             android:orientation="vertical">
             <EditText
                 android:id="@+id/event_header"
@@ -208,6 +208,8 @@
                     android:id="@+id/event_loc"
                     android:layout_gravity="center_vertical"
                     android:text=""
+                    android:layout_marginStart="10dp"
+                    android:layout_marginEnd="10dp"
                     android:layout_weight="10"
                     android:isScrollContainer="true"
                     android:layout_width="wrap_content"
@@ -220,7 +222,8 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:clickable="true"
-                    android:src="@drawable/event_loc">
+                    android:src="@drawable/event_loc"
+                    android:layout_gravity="center_vertical">
                 </ImageView>
 
             </LinearLayout>

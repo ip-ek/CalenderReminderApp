@@ -4,22 +4,47 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/colorPrimary">
+    <Toolbar
+        android:background="@color/colorPrimaryDark"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+        <TextView
+            android:textSize="20sp"
+            android:text="Ayarlar"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"/>
+    </Toolbar>
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_margin="20dp"
         android:orientation="vertical">
-        <TextView
-            android:background="#FFFFFF"
+        <LinearLayout
+            android:orientation="horizontal"
             android:layout_marginTop="10dp"
             android:layout_marginBottom="20dp"
-            android:text="zil sesi seçme gelecek"
-            android:textSize="20sp"
             android:layout_width="match_parent"
             android:layout_height="wrap_content">
-        </TextView>
+            <TextView
+                android:id="@+id/sett_ringtone"
+                android:layout_weight="5"
+                android:background="@color/white"
+                android:layout_gravity="center_vertical"
+                android:text="selected ringtone"
+                android:textSize="20sp"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content">
+            </TextView>
+            <Button
+                android:id="@+id/sett_btn_ringtone"
+                android:layout_weight="1"
+                android:text="Zil sesi"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"/>
+        </LinearLayout>
+
         <LinearLayout
-            android:background="#FFFFFF"
+            android:background="@color/white"
             android:layout_marginBottom="20dp"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -39,7 +64,7 @@
             </Spinner>
         </LinearLayout>
         <LinearLayout
-            android:background="#FFFFFF"
+            android:background="@color/white"
             android:layout_marginBottom="20dp"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
