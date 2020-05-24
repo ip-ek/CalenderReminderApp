@@ -11,6 +11,7 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.PopupMenu;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import java.util.ArrayList;
 
@@ -21,11 +22,13 @@ public class UpcomeEventAdapter extends RecyclerView.Adapter<UpcomeEventAdapter.
     private Context context;    //başka sınıflara geçme vs için kullanılır. MainActivity.this gibi
     private ArrayList<UpcomeEvent> eventArrayList;
 
+    UpcomeEventDatabase db;
+
     public UpcomeEventAdapter(Context context, ArrayList<UpcomeEvent> eventArrayList) {
 
         //Dışarıdan veri almaya yarar. Context, Activity özelliklerine sahip olmak için kullanılır
         this.context = context;
-        Log.d("takip", "adapterda: "+eventArrayList.get(0).getLabel());
+      //  Log.d("takip", "adapterda: "+eventArrayList.get(0).getLabel());
         this.eventArrayList = eventArrayList;
     }
 
@@ -55,13 +58,13 @@ public class UpcomeEventAdapter extends RecyclerView.Adapter<UpcomeEventAdapter.
     }
 
     @Override
-    public void onBindViewHolder(@NonNull final MyViewHolder holder, int position) {
+    public void onBindViewHolder(@NonNull final MyViewHolder holder, final int position) {
         //Görsel nesnelerin satır satır doldurulması ve yapılacak işlemler burada
         final UpcomeEvent event=eventArrayList.get(position); //bu final olmazsa inner erişemiyor. işlem yapılan card
         holder.eventType.setText(event.getType());
         holder.eventLabel.setText(event.getLabel());
-        holder.eventDate.setText(event.getDate());
-        holder.eventTime.setText(event.getTime());
+        holder.eventDate.setText(event.getStartDate());
+        holder.eventTime.setText(event.getStartTime());
 
         //holder.   //onclickler falan burda
         //holder.eventDate.setText("dsakm");
@@ -75,10 +78,17 @@ public class UpcomeEventAdapter extends RecyclerView.Adapter<UpcomeEventAdapter.
                     public boolean onMenuItemClick(MenuItem item) {
                         switch (item.getItemId()){
                             case R.id.upcome_delete:
-                                eventArrayList.remove(event);
+                                //recycler'dan siliyor
+                                eventArrayList.remove(position);
+                                notifyItemRemoved(position);
+                                notifyItemRangeChanged(position,eventArrayList.size());
+                                Toast.makeText(context, event+" silindi", Toast.LENGTH_SHORT).show();
+
+                                db = new UpcomeEventDatabase(context);
+                                new UpcomeEventDao().deleteEvent(db, event.getEventID());
                                 return true;
                             case R.id.upcome_send:
-                                String eventMessage = "Etkinlik Türü: "+event.getType()+"\nEtkinlik Adı: "+event.getLabel()+"\nEtkinlik Başlangıç Tarih ve Saati: "+event.getDate()+" - "+event.getTime();
+                                String eventMessage = event.toString();
                                 try{
                                     Intent sendIntent = new Intent();
                                     sendIntent.setAction(Intent.ACTION_SEND);
@@ -95,6 +105,14 @@ public class UpcomeEventAdapter extends RecyclerView.Adapter<UpcomeEventAdapter.
                     }
                 });
                 popupMenu.show();
+            }
+        });
+        holder.infoLayout.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                /*Intent intent=new Intent(context,EventActivity.class);
+                context.startActivity();
+                event*/
             }
         });
     }

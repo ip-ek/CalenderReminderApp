@@ -49,6 +49,8 @@ public class EventActivity extends AppCompatActivity {
     ArrayAdapter freqAdapter;
     ArrayAdapter typeAdapter;
 
+    UpcomeEventDatabase db;
+
     private final static int ERROR_DIALOG_REQUEST = 9001;
 
     @Override
@@ -197,12 +199,26 @@ public class EventActivity extends AppCompatActivity {
         eventSave.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-
-                eventFreq.getSelectedItem().toString();
-                eventType.getSelectedItem().toString();
+                addEvent();
+                //Toast.makeText(getApplicationContext(), "Etkinlik kaydedildi", Toast.LENGTH_SHORT).show();
+                finish();
             }
         });
+    }
 
+    public void addEvent(){
+        //TODO: eksik bilgi kontrolü
+        UpcomeEvent event= new UpcomeEvent(0,eventType.getSelectedItem().toString(),
+                header.getText().toString(),content.getText().toString(),
+                startDate.getText().toString(),startTime.getText().toString(),
+                endDate.getText().toString(),endTime.getText().toString(),
+                "",
+                eventFreq.getSelectedItem().toString(),
+                eventLoc.getText().toString());
+        int id=new UpcomeEventDao().addEvent(db, event, 0);
+        Toast.makeText(getApplicationContext(),id+ " numarası ile kaydedildi",Toast.LENGTH_SHORT).show();
+        //TODO: if(event==-1)
+        event.setEventID(id);
     }
 
     @Override
@@ -220,6 +236,9 @@ public class EventActivity extends AppCompatActivity {
     }
 
     private void describe(){
+
+        db = new UpcomeEventDatabase(this);
+
         startDate=findViewById(R.id.event_start_date);
         startTime=findViewById(R.id.event_start_time);
         endDate=findViewById(R.id.event_end_date);

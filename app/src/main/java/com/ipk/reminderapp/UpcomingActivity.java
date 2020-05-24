@@ -35,11 +35,15 @@ public class UpcomingActivity extends AppCompatActivity {
     TextView currDate, goDate, byDay, byWeek, byMonth;
 
     Toolbar toolbar;
+    private UpcomeEventDatabase db;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_upcoming);
+
+
+        //todo: dark light mode seçim form mypref
 
         describe();
         filter();
@@ -71,6 +75,8 @@ public class UpcomingActivity extends AppCompatActivity {
     }
 
     public void describe(){
+        db = new UpcomeEventDatabase(this);
+
         toolbar=findViewById(R.id.upcome_toolbar);
 
         toolbar.setTitle("16011073");
@@ -140,23 +146,31 @@ public class UpcomingActivity extends AppCompatActivity {
     public void rycFunction(){
         eventRcycler.setLayoutManager(new LinearLayoutManager(this));
 
-        upcomeEvents=new ArrayList<>();
+        upcomeEvents=new UpcomeEventDao().getAllEvents(db);
         //TODO: filtreleyerek add yapılacak : filtrele
 
-        UpcomeEvent e1=new UpcomeEvent(1, "etkinlik","ödev", "26/10/2020","10:00");
-        UpcomeEvent e2=new UpcomeEvent(2, "toplantı","staj", "26/10/2020","10:00");
-        UpcomeEvent e3=new UpcomeEvent(3, "dg","ipek dg", "02/01/2020","10:00");
-        UpcomeEvent e4=new UpcomeEvent(4, "yıl dönümü","kader", "01/09/2020","10:00");
-        UpcomeEvent e5=new UpcomeEvent(5, "etkinlik","ödev", "26/10/2020","10:00");
+        /*UpcomeEvent e1=new UpcomeEvent(1, "etkinlik","ödev","android ödev teslimi", "26/10/2020","10:00", "27/10/2020","11.00","","","");
+        UpcomeEvent e2=new UpcomeEvent(2, "toplantı","staj","", "26/10/2020","10:00", "26/10/2020","10:00", "","","");
+        UpcomeEvent e3=new UpcomeEvent(3, "dg","ipek dg","", "02/01/2020","10:00", "02/01/2020","10:00","","","");
+        UpcomeEvent e4=new UpcomeEvent(4, "yıl dönümü","kader","", "01/09/2020","10:00", "02/01/2020","10:00", "","","");
+        UpcomeEvent e5=new UpcomeEvent(5, "etkinlik","ödev","", "26/10/2020","10:00", "02/01/2020","10:00","","","");
         upcomeEvents.add(e1);
         upcomeEvents.add(e2);
         upcomeEvents.add(e3);
         upcomeEvents.add(e4);
-        upcomeEvents.add(e5);
-        Log.d("takip", "upcomeEvents:" +upcomeEvents.get(0).getLabel());
+        upcomeEvents.add(e5);*/
+        //başta db boş
+      //  Log.d("takip", "upcomeEvents:" +upcomeEvents.get(0).getLabel());
 
         eventAdapter = new UpcomeEventAdapter(this, upcomeEvents);
         eventRcycler.setAdapter(eventAdapter);
+    }
+
+    //kayıttan sonra dönünce direk görüntüleme :))
+    @Override
+    protected void onResume() {
+        super.onResume();
+        rycFunction();
     }
 
     //settings için
