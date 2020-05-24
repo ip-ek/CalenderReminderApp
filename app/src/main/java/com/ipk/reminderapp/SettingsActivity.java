@@ -32,6 +32,8 @@ public class SettingsActivity extends AppCompatActivity {
     ArrayAdapter timeAdapter, freqAdapter;
 
     SharedPreferences sharedPreferences;
+    String ringTonePath;
+    int freqSpinInt, timeSpinInt;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -46,12 +48,6 @@ public class SettingsActivity extends AppCompatActivity {
         btnRingTone =findViewById(R.id.sett_btn_ringtone);
         ringTone =findViewById(R.id.sett_ringtone);
 
-        //default olan TODO: shareddan alınacak :)
-        Uri alarmUri = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION);
-        ringTone.setText(alarmUri.toString());
-
-        sharedPreferences = getSharedPreferences("myPref", Context.MODE_PRIVATE);
-        modeSwitch.setChecked(sharedPreferences.getBoolean("Mode", false));
 
         setTimeArr();
         setFreqArr();
@@ -61,10 +57,25 @@ public class SettingsActivity extends AppCompatActivity {
         freqAdapter = new ArrayAdapter(this, R.layout.support_simple_spinner_dropdown_item, freqArr);
         freqSpin.setAdapter(freqAdapter);
 
+        //adapter'ı shared'dan önce getirmelisin
+
+        sharedPreferences = getSharedPreferences("myPref", Context.MODE_PRIVATE);
+        Uri alarmUri = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION);
+        ringTone.setText(sharedPreferences.getString("ringTone", alarmUri.toString()));
+        timeSpin.setSelection(sharedPreferences.getInt("timeSpin", 0));
+        freqSpin.setSelection(sharedPreferences.getInt("freqSpin", 0));
+        modeSwitch.setChecked(sharedPreferences.getBoolean("mode", false));
+        if (modeSwitch.isChecked()) {
+            modeText.setText(R.string.sett_dark);
+        } else {
+            modeText.setText(R.string.sett_light);
+        }
+
+
         timeSpin.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-
+                timeSpinInt=position;
             }
 
             @Override
@@ -76,7 +87,7 @@ public class SettingsActivity extends AppCompatActivity {
         freqSpin.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-
+                freqSpinInt=position;
             }
 
             @Override
@@ -117,10 +128,14 @@ public class SettingsActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 SharedPreferences.Editor editor = sharedPreferences.edit();
-                editor.putBoolean("Mode", modeSwitch.isChecked());
+                editor.putBoolean("mode", modeSwitch.isChecked());
+                editor.putString("ringTone", ringTonePath);
+                editor.putInt("freqSpin", freqSpinInt);
+                editor.putInt("timeSpin", timeSpinInt);
                 editor.apply();
                 editor.commit();
                 Toast.makeText(getApplicationContext(), "Kaydedildi", Toast.LENGTH_LONG).show();
+                finish();
             }
         });
 
@@ -132,8 +147,9 @@ public class SettingsActivity extends AppCompatActivity {
             if (resultCode == RESULT_OK) {
                 Uri uri = data.getParcelableExtra(RingtoneManager.EXTRA_RINGTONE_PICKED_URI);
                 if (uri != null) {
-                    String ringTonePath = uri.toString();
-                    RingtoneManager.setActualDefaultRingtoneUri(SettingsActivity.this, RingtoneManager.TYPE_NOTIFICATION, uri);
+                    ringTonePath = uri.toString();
+                    //bu telefonu değiştirdiği için hata veriyor amannn
+                    //RingtoneManager.setActualDefaultRingtoneUri(SettingsActivity.this, RingtoneManager.TYPE_NOTIFICATION, uri);
                     Log.d("takip", "Ringtone:" + ringTonePath);
                     ringTone.setText(ringTonePath);
                     //TODO: ringtonePath ekrana alındığı yazılsın
