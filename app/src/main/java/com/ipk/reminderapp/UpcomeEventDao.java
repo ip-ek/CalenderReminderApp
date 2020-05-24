@@ -39,7 +39,7 @@ public class UpcomeEventDao {
 
         while (cursor.moveToNext()){
             UpcomeEvent event =new UpcomeEvent(cursor.getInt(cursor.getColumnIndex("event_id")),
-                    cursor.getString(cursor.getColumnIndex("type")),
+                    cursor.getInt(cursor.getColumnIndex("type")),
                     cursor.getString(cursor.getColumnIndex("label")),
                     cursor.getString(cursor.getColumnIndex("content")),
                     cursor.getString(cursor.getColumnIndex("startDate")),
@@ -47,8 +47,9 @@ public class UpcomeEventDao {
                     cursor.getString(cursor.getColumnIndex("endDate")),
                     cursor.getString(cursor.getColumnIndex("endTime")),
                     cursor.getString(cursor.getColumnIndex("remindTime")),
-                    cursor.getString(cursor.getColumnIndex("eventFreq")),
-                    cursor.getString(cursor.getColumnIndex("address")));
+                    cursor.getInt(cursor.getColumnIndex("eventFreq")),
+                    cursor.getString(cursor.getColumnIndex("address")),
+                    cursor.getInt(cursor.getColumnIndex("parentEvent")));
             Log.d("takip", "label: "+ cursor.getString(cursor.getColumnIndex("label")));
             eventArrayList.add(event);
         }

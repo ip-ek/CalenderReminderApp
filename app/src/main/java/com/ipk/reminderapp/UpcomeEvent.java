@@ -4,15 +4,17 @@ import androidx.annotation.NonNull;
 
 public class UpcomeEvent {
     //model
-    private String type, label, content, startDate, startTime, endDate, endTime, remindTime, enventFreq, address;
-    private int eventID;
+    private String label, content, startDate, startTime, endDate, endTime, remindTime, address;
+    private int eventID, enventFreq, type, parent;
 
     public UpcomeEvent() {
     }
 
-    public UpcomeEvent(int eventID, String type, String label, String content, String startDate, String startTime, String endDate, String endTime, String remindTime, String enventFreq, String address) {
+    public UpcomeEvent(int eventID, int type, String label, String content, String startDate, String startTime, String endDate, String endTime, String remindTime, int enventFreq, String address, int parent) {
+        this.eventID = eventID;
         this.type = type;
         this.label = label;
+        this.content = content;
         this.startDate = startDate;
         this.startTime = startTime;
         this.endDate = endDate;
@@ -20,15 +22,14 @@ public class UpcomeEvent {
         this.remindTime = remindTime;
         this.enventFreq = enventFreq;
         this.address = address;
-        this.eventID = eventID;
-        this.content=content;
+        this.parent=parent;
     }
 
-    public String getType() {
+    public int getType() {
         return type;
     }
 
-    public void setType(String type) {
+    public void setType(int type) {
         this.type = type;
     }
 
@@ -80,11 +81,11 @@ public class UpcomeEvent {
         this.remindTime = remindTime;
     }
 
-    public String getEnventFreq() {
+    public int getEnventFreq() {
         return enventFreq;
     }
 
-    public void setEnventFreq(String enventFreq) {
+    public void setEnventFreq(int enventFreq) {
         this.enventFreq = enventFreq;
     }
 
@@ -110,6 +111,14 @@ public class UpcomeEvent {
 
     public void setContent(String content) {
         this.content = content;
+    }
+
+    public int getParent() {
+        return parent;
+    }
+
+    public void setParent(int parent) {
+        this.parent = parent;
     }
 
     @NonNull

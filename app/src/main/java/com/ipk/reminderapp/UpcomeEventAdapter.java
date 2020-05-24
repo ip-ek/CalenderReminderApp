@@ -1,6 +1,7 @@
 package com.ipk.reminderapp;
 
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -16,6 +17,7 @@ import android.widget.Toast;
 import java.util.ArrayList;
 
 import androidx.annotation.NonNull;
+import androidx.appcompat.app.AlertDialog;
 import androidx.recyclerview.widget.RecyclerView;
 
 public class UpcomeEventAdapter extends RecyclerView.Adapter<UpcomeEventAdapter.MyViewHolder> {
@@ -61,7 +63,21 @@ public class UpcomeEventAdapter extends RecyclerView.Adapter<UpcomeEventAdapter.
     public void onBindViewHolder(@NonNull final MyViewHolder holder, final int position) {
         //Görsel nesnelerin satır satır doldurulması ve yapılacak işlemler burada
         final UpcomeEvent event=eventArrayList.get(position); //bu final olmazsa inner erişemiyor. işlem yapılan card
-        holder.eventType.setText(event.getType());
+        switch(event.getType()){
+            case 0:
+                holder.eventType.setText("Etkinlik");
+                break;
+            case 1:
+                holder.eventType.setText("Toplantı");
+                break;
+            case 2:
+                holder.eventType.setText("Doğum Günü");
+                break;
+            case 3:
+                holder.eventType.setText("Yıldönümü");
+                break;
+        }
+
         holder.eventLabel.setText(event.getLabel());
         holder.eventDate.setText(event.getStartDate());
         holder.eventTime.setText(event.getStartTime());
@@ -78,14 +94,33 @@ public class UpcomeEventAdapter extends RecyclerView.Adapter<UpcomeEventAdapter.
                     public boolean onMenuItemClick(MenuItem item) {
                         switch (item.getItemId()){
                             case R.id.upcome_delete:
-                                //recycler'dan siliyor
-                                eventArrayList.remove(position);
-                                notifyItemRemoved(position);
-                                notifyItemRangeChanged(position,eventArrayList.size());
-                                Toast.makeText(context, event+" silindi", Toast.LENGTH_SHORT).show();
+                                AlertDialog.Builder builder = new AlertDialog.Builder(context);
+                                builder.setTitle("Uyarı!");
+                                builder.setMessage(event.getLabel()+ " - silinsin mi?");
+                                builder.setCancelable(false);
 
-                                db = new UpcomeEventDatabase(context);
-                                new UpcomeEventDao().deleteEvent(db, event.getEventID());
+                                builder.setPositiveButton("Evet", new DialogInterface.OnClickListener() {
+                                    @Override
+                                    public void onClick(DialogInterface dialogInterface, int i) {
+                                        //recycler'dan siliyor
+                                        eventArrayList.remove(position);
+                                        notifyItemRemoved(position);
+                                        notifyItemRangeChanged(position,eventArrayList.size());
+                                        Toast.makeText(context, event.getLabel()+" silindi", Toast.LENGTH_SHORT).show();
+
+                                        db = new UpcomeEventDatabase(context);
+                                        new UpcomeEventDao().deleteEvent(db, event.getEventID());
+                                    }
+                                });
+
+                                builder.setNegativeButton("Hayır", new DialogInterface.OnClickListener() {
+                                    @Override
+                                    public void onClick(DialogInterface dialogInterface, int i) {
+
+                                    }
+                                });
+                                builder.create().show();
+
                                 return true;
                             case R.id.upcome_send:
                                 String eventMessage = event.toString();
@@ -110,9 +145,21 @@ public class UpcomeEventAdapter extends RecyclerView.Adapter<UpcomeEventAdapter.
         holder.infoLayout.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                /*Intent intent=new Intent(context,EventActivity.class);
-                context.startActivity();
-                event*/
+                Intent intent=new Intent(context,EventActivity.class);
+                //eventID 0dan büyüktür
+                intent.putExtra("eventID", event.getEventID());
+                intent.putExtra("type", event.getType());
+                intent.putExtra("label", event.getLabel());
+                intent.putExtra("content", event.getContent());
+                intent.putExtra("startDate", event.getStartDate());
+                intent.putExtra("startTime", event.getStartTime());
+                intent.putExtra("endDate", event.getEndDate());
+                intent.putExtra("endTime", event.getEndTime());
+                intent.putExtra("remindTime", event.getRemindTime());
+                intent.putExtra("enventFreq", event.getEnventFreq());
+                intent.putExtra("address", event.getAddress());
+                intent.putExtra("eventParent", event.getParent());
+                context.startActivity(intent);
             }
         });
     }

@@ -60,6 +60,7 @@ public class EventActivity extends AppCompatActivity {
 
         describe();
         remindEvent();
+        updateOrSave();
 
         startDate.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -199,7 +200,12 @@ public class EventActivity extends AppCompatActivity {
         eventSave.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                addEvent();
+                int id;
+                if(0==(id=getIntent().getIntExtra("eventID",0))){
+                    addEvent();
+                }else{
+                    updateEvent();
+                }
                 //Toast.makeText(getApplicationContext(), "Etkinlik kaydedildi", Toast.LENGTH_SHORT).show();
                 finish();
             }
@@ -208,17 +214,29 @@ public class EventActivity extends AppCompatActivity {
 
     public void addEvent(){
         //TODO: eksik bilgi kontrolü
-        UpcomeEvent event= new UpcomeEvent(0,eventType.getSelectedItem().toString(),
+        UpcomeEvent event= new UpcomeEvent(0,eventType.getSelectedItemPosition(),
                 header.getText().toString(),content.getText().toString(),
                 startDate.getText().toString(),startTime.getText().toString(),
                 endDate.getText().toString(),endTime.getText().toString(),
                 "",
-                eventFreq.getSelectedItem().toString(),
-                eventLoc.getText().toString());
+                eventFreq.getSelectedItemPosition(),
+                eventLoc.getText().toString(),0);
         int id=new UpcomeEventDao().addEvent(db, event, 0);
         Toast.makeText(getApplicationContext(),id+ " numarası ile kaydedildi",Toast.LENGTH_SHORT).show();
         //TODO: if(event==-1)
         event.setEventID(id);
+    }
+
+    public void updateEvent(){
+        UpcomeEvent event= new UpcomeEvent(getIntent().getIntExtra("eventID",0),eventType.getSelectedItemPosition(),
+                header.getText().toString(),content.getText().toString(),
+                startDate.getText().toString(),startTime.getText().toString(),
+                endDate.getText().toString(),endTime.getText().toString(),
+                "",
+                eventFreq.getSelectedItemPosition(),
+                eventLoc.getText().toString(), getIntent().getIntExtra("parentEvent",0));
+        new UpcomeEventDao().updateEvent(db,getIntent().getIntExtra("eventID",0),event,getIntent().getIntExtra("parentEvent",0));
+        Toast.makeText(getApplicationContext(),+ getIntent().getIntExtra("eventID",0)+" numarası ile güncelendi",Toast.LENGTH_SHORT).show();
     }
 
     @Override
@@ -304,6 +322,28 @@ public class EventActivity extends AppCompatActivity {
         });
 
 
+    }
+
+    public void updateOrSave(){
+        int id;
+        if(0==(id=getIntent().getIntExtra("eventID",0))){
+            //kayda gelmiştir.
+            eventSave.setText("Kaydet");
+        }else{
+            eventSave.setText("Güncelle");
+            startDate.setText(getIntent().getStringExtra("startDate"));
+            startTime.setText(getIntent().getStringExtra("startTime"));
+            endDate.setText(getIntent().getStringExtra("endDate"));
+            endTime.setText(getIntent().getStringExtra("endTime"));
+            eventLoc.setText(getIntent().getStringExtra("address"));
+            header.setText(getIntent().getStringExtra("label"));
+            content.setText(getIntent().getStringExtra("content"));
+            //eventColor.setText(getIntent().getStringExtra());
+            //remindTime.setText(getIntent().getStringExtra());"remindTime"
+            //spinner
+            eventFreq.setSelection(getIntent().getIntExtra("enventFreq", 0));
+            eventType.setSelection(getIntent().getIntExtra("type", 0));
+        }
     }
 
     public boolean isServicesOkey(){

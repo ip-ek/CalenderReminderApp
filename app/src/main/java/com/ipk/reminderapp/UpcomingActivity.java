@@ -108,6 +108,7 @@ public class UpcomingActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 Intent intent=new Intent(UpcomingActivity.this, EventActivity.class);
+                intent.putExtra("eventID", 0);
                 startActivity(intent);
             }
         });

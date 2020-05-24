@@ -15,7 +15,7 @@ public class UpcomeEventDatabase extends SQLiteOpenHelper {
     public void onCreate(SQLiteDatabase db) {
         db.execSQL("CREATE TABLE events(" +
                 "event_id INTEGER PRIMARY KEY AUTOINCREMENT," +
-                "type TEXT," +
+                "type INTEGER," +
                 "label TEXT," +
                 "content TEXT," +
                 "startDate TEXT," +
@@ -23,7 +23,7 @@ public class UpcomeEventDatabase extends SQLiteOpenHelper {
                 "endDate TEXT,"+
                 "endTime TEXT,"+
                 "remindTime TEXT,"+
-                "eventFreq TEXT,"+
+                "eventFreq INTEGER,"+
                 "address TEXT,"+
                 "parentEvent INTEGER" +
                 ");");
