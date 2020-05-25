@@ -60,14 +60,15 @@ public class UpcomeEventDao {
         return eventArrayList;
     }
 
-    public ArrayList<UpcomeEvent> getDailyEvents(UpcomeEventDatabase db, String date, String typeFilter){
+    public ArrayList<UpcomeEvent> getDailyEvents(UpcomeEventDatabase db, String date, ArrayList<Integer> typeFilter){
         ArrayList<UpcomeEvent> eventArrayList = new ArrayList<>();
         SQLiteDatabase sqLiteDatabase= db.getWritableDatabase();
 
         Cursor cursor = sqLiteDatabase.rawQuery("SELECT * FROM events", null);
 
         while (cursor.moveToNext()) {
-            if (cursor.getString(cursor.getColumnIndex("startDate")).equals(date)) {
+            if (cursor.getString(cursor.getColumnIndex("startDate")).equals(date) &&
+                    typeFilter.contains(cursor.getInt(cursor.getColumnIndex("type")))) {
                 UpcomeEvent event = new UpcomeEvent(cursor.getInt(cursor.getColumnIndex("event_id")),
                         cursor.getInt(cursor.getColumnIndex("type")),
                         cursor.getString(cursor.getColumnIndex("label")),
@@ -87,7 +88,7 @@ public class UpcomeEventDao {
         return eventArrayList;
     }
 
-    public ArrayList<UpcomeEvent> getMonthEvents(UpcomeEventDatabase db, String date, String typeFilter){
+    public ArrayList<UpcomeEvent> getMonthEvents(UpcomeEventDatabase db, String date, ArrayList<Integer> typeFilter){
         ArrayList<UpcomeEvent> eventArrayList = new ArrayList<>();
         SQLiteDatabase sqLiteDatabase= db.getWritableDatabase();
 
@@ -105,7 +106,8 @@ public class UpcomeEventDao {
             while (cursor.moveToNext()) {
                 //dd/mm/yyyy
                 dbDate=cursor.getString(cursor.getColumnIndex("startDate"));
-                if (dbDate.equals(date) ||(format.parse(dbDate).after(start.getTime()) && format.parse(dbDate).before(end.getTime()))) {
+                if ((dbDate.equals(date) ||(format.parse(dbDate).after(start.getTime()) && format.parse(dbDate).before(end.getTime()))) &&
+                        typeFilter.contains(cursor.getInt(cursor.getColumnIndex("type")))) {
                     UpcomeEvent event = new UpcomeEvent(cursor.getInt(cursor.getColumnIndex("event_id")),
                             cursor.getInt(cursor.getColumnIndex("type")),
                             cursor.getString(cursor.getColumnIndex("label")),
@@ -130,7 +132,7 @@ public class UpcomeEventDao {
         return eventArrayList;
     }
 
-    public ArrayList<UpcomeEvent> getWeekEvents(UpcomeEventDatabase db, String date, String typeFilter){
+    public ArrayList<UpcomeEvent> getWeekEvents(UpcomeEventDatabase db, String date, ArrayList<Integer> typeFilter){
         ArrayList<UpcomeEvent> eventArrayList = new ArrayList<>();
         SQLiteDatabase sqLiteDatabase= db.getWritableDatabase();
 
@@ -148,7 +150,8 @@ public class UpcomeEventDao {
             while (cursor.moveToNext()) {
                 //dd/mm/yyyy
                 dbDate=cursor.getString(cursor.getColumnIndex("startDate"));
-                if (dbDate.equals(date) ||(format.parse(dbDate).after(start.getTime()) && format.parse(dbDate).before(end.getTime()))) {
+                if ((dbDate.equals(date) ||(format.parse(dbDate).after(start.getTime()) && format.parse(dbDate).before(end.getTime()))) &&
+                        typeFilter.contains(cursor.getInt(cursor.getColumnIndex("type")))) {
                     UpcomeEvent event = new UpcomeEvent(cursor.getInt(cursor.getColumnIndex("event_id")),
                             cursor.getInt(cursor.getColumnIndex("type")),
                             cursor.getString(cursor.getColumnIndex("label")),

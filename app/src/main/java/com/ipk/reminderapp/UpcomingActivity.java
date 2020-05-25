@@ -42,6 +42,7 @@ public class UpcomingActivity extends AppCompatActivity {
     private UpcomeEventDatabase db;
     SharedPreferences sharedPreferences;
     String selectedFilter;
+    ArrayList<Integer> typeFilterArr;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -84,6 +85,12 @@ public class UpcomingActivity extends AppCompatActivity {
 
     public void describe(){
         db = new UpcomeEventDatabase(this);
+        typeFilterArr= new ArrayList<>();
+        //başta hepsi işaretli gelir
+        typeFilterArr.add(0);
+        typeFilterArr.add(2);
+        typeFilterArr.add(3);
+        typeFilterArr.add(1);
 
         toolbar=findViewById(R.id.upcome_toolbar);
 
@@ -156,19 +163,68 @@ public class UpcomingActivity extends AppCompatActivity {
                 rycFunction(selectedFilter);
             }
         });
+
+        event.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if(event.isChecked()){
+                    //databasede index olarak kaydedildiler. //TODO: db düzeni ://
+                    typeFilterArr.add(0);
+                }else{
+                    typeFilterArr.remove(Integer.valueOf(0));
+                }
+                rycFunction(selectedFilter);
+            }
+        });
+
+        meeting.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if(meeting.isChecked()){
+                    typeFilterArr.add(1);
+                }else{
+                    typeFilterArr.remove(Integer.valueOf(1));
+                }
+                rycFunction(selectedFilter);
+            }
+        });
+
+        aniversary.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if(aniversary.isChecked()){
+                    typeFilterArr.add(3);
+                }else{
+                    typeFilterArr.remove(Integer.valueOf(3));
+                }
+                rycFunction(selectedFilter);
+            }
+        });
+
+        birthday.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if(birthday.isChecked()){
+                    typeFilterArr.add(2);
+                }else{
+                    typeFilterArr.remove((Integer) 2);
+                }
+                rycFunction(selectedFilter);
+            }
+        });
     }
 
     public void rycFunction(String selectedFilter){
         eventRcycler.setLayoutManager(new LinearLayoutManager(this));
         switch (selectedFilter){
             case "day":
-                upcomeEvents=new UpcomeEventDao().getDailyEvents(db, currDate.getText().toString(),"");
+                upcomeEvents=new UpcomeEventDao().getDailyEvents(db, currDate.getText().toString(),typeFilterArr);
                 break;
             case "month":
-                upcomeEvents=new UpcomeEventDao().getMonthEvents(db, currDate.getText().toString(), "");
+                upcomeEvents=new UpcomeEventDao().getMonthEvents(db, currDate.getText().toString(), typeFilterArr);
                 break;
             case "week":
-                upcomeEvents=new UpcomeEventDao().getWeekEvents(db, currDate.getText().toString(), "");
+                upcomeEvents=new UpcomeEventDao().getWeekEvents(db, currDate.getText().toString(), typeFilterArr);
                 break;
         }
         //upcomeEvents=new UpcomeEventDao().getAllEvents(db);

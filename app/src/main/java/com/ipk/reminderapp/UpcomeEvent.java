@@ -124,12 +124,13 @@ public class UpcomeEvent {
     @NonNull
     @Override
     public String toString() {
-        String str= type+"\nEtkinlik Adı: "+label;
-        if(this.content!=""){
+        //TODO: istersen etkinlik türünü de gönder
+        String str= "\nEtkinlik Adı: "+label;
+        if(!this.content.equals("")){
             str=str+"\nKonusu: "+content;
         }
         str=str+"\nBaşlangıç: "+this.startDate+" - " + this.startTime+"\nBitiş: "+ this.endDate+" - "+this.endTime;
-        if(this.address!=""){
+        if(!this.address.equals("")){
             str=str+"\nAdres: "+this.address;
         }
         return str;
