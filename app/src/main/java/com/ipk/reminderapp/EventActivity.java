@@ -6,8 +6,12 @@ import androidx.appcompat.app.AppCompatActivity;
 import android.app.DatePickerDialog;
 import android.app.Dialog;
 import android.app.TimePickerDialog;
+import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.location.Address;
+import android.media.RingtoneManager;
+import android.net.Uri;
 import android.os.Bundle;
 import android.text.format.DateUtils;
 import android.util.Log;
@@ -50,6 +54,9 @@ public class EventActivity extends AppCompatActivity {
     ArrayAdapter typeAdapter;
 
     UpcomeEventDatabase db;
+    SharedPreferences sharedPreferences;
+
+    int repeatCount=0;
 
     private final static int ERROR_DIALOG_REQUEST = 9001;
 
@@ -224,7 +231,55 @@ public class EventActivity extends AppCompatActivity {
         int id=new UpcomeEventDao().addEvent(db, event, 0);
         Toast.makeText(getApplicationContext(),id+ " numarası ile kaydedildi",Toast.LENGTH_SHORT).show();
         //TODO: if(event==-1)
+        //repeatCount
         event.setEventID(id);
+        if(eventFreq.getSelectedItemPosition()!=0){
+            addRepeatedEvent(event,eventFreq.getSelectedItemPosition());
+        }
+    }
+
+    public void addRepeatedEvent(UpcomeEvent parentEvent, int type){
+        DateFormat format = new SimpleDateFormat("dd/MM/yyyy");
+        Calendar start = Calendar.getInstance();
+        Calendar end= Calendar.getInstance();
+        try{
+            start.setTime(format.parse(parentEvent.getStartDate()));
+            end.setTime(format.parse(parentEvent.getEndDate()));
+            for(int i=0; i<repeatCount; i++){
+                switch (type){
+                    case 1:
+                        start.add(Calendar.DATE, 1);
+                        end.add(Calendar.DATE, 1);
+                        //her gün
+                        break;
+                    case 2:
+                        start.add(Calendar.DATE, 7);
+                        end.add(Calendar.DATE, 7);
+                        //her hafta
+                        break;
+                    case 3:
+                        start.add(Calendar.MONTH,1);
+                        end.add(Calendar.MONTH,1);
+                        //her ay
+                        break;
+                    case 4:
+                        start.add(Calendar.YEAR, 1);
+                        end.add(Calendar.YEAR, 1);
+                        //her yıl
+                        break;
+                }
+                UpcomeEvent newEvent = new UpcomeEvent(0, parentEvent.getType(),
+                        parentEvent.getLabel(), parentEvent.getContent(),
+                        format.format(start.getTime()), parentEvent.getStartTime(),
+                        end.toString(), parentEvent.getEndTime(),
+                        parentEvent.getRemindTime(),
+                        0, parentEvent.getAddress(), parentEvent.getEventID());
+                int id=new UpcomeEventDao().addEvent(db, newEvent, parentEvent.getEventID());
+                newEvent.setEventID(id);
+            }
+        }catch (Exception e){
+            e.printStackTrace();
+        }
     }
 
     public void updateEvent(){
@@ -249,6 +304,17 @@ public class EventActivity extends AppCompatActivity {
             }else if(resultCode==RESULT_CANCELED){
                 Toast.makeText(getApplicationContext(),"Konum Alınamadı", Toast.LENGTH_LONG).show();
             }
+        }else if(requestCode==444){
+            if(resultCode==RESULT_OK){
+                if(!data.getStringExtra("reminder").equals("Hiçbir zaman")){
+                    repeatCount=data.getIntExtra("numberPicker", 1);
+                }
+                remindTime.setText(data.getStringExtra("reminder"));
+                Log.d("takip", "alınan str: "+ data.getStringExtra("reminder"));
+
+            }else if(resultCode==RESULT_CANCELED){
+                Toast.makeText(getApplicationContext(), "Tekrar bilgisi alınmadı", Toast.LENGTH_SHORT).show();
+            }
         }
         super.onActivityResult(requestCode, resultCode, data);
     }
@@ -256,6 +322,7 @@ public class EventActivity extends AppCompatActivity {
     private void describe(){
 
         db = new UpcomeEventDatabase(this);
+        sharedPreferences = getSharedPreferences("myPref", Context.MODE_PRIVATE);
 
         startDate=findViewById(R.id.event_start_date);
         startTime=findViewById(R.id.event_start_time);
@@ -315,9 +382,7 @@ public class EventActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 Intent intent=new Intent(EventActivity.this, ReminderActivity.class);
-                startActivity(intent);
-                /*TODO:
-                   yazı yerine switch-case koyabilirsin daha güzel olur*/
+                startActivityForResult(intent, 444);
             }
         });
 
@@ -329,6 +394,41 @@ public class EventActivity extends AppCompatActivity {
         if(0==(id=getIntent().getIntExtra("eventID",0))){
             //kayda gelmiştir.
             eventSave.setText("Kaydet");
+            //bunu string olarak saklayınca spinner sette sıkıntı çıkıyordu.
+            //timearr'i hepsine yazıp neden indexof yapmadım ben de bilmiyorum TODO
+            switch (sharedPreferences.getInt("timeSpin", 0)){
+                case 0:
+                    remindTime.setText("Hiçbir zaman");
+                    break;
+                case 1:
+                    remindTime.setText("0 dakika önce");
+                    break;
+                case 2:
+                    remindTime.setText("5 dakika önce");
+                    break;
+                case 3:
+                    remindTime.setText("15 dakika önce");
+                    break;
+                case 4:
+                    remindTime.setText("30 dakika önce");
+                    break;
+                case 5:
+                    remindTime.setText("1 saat önce");
+                    break;
+                case 6:
+                    remindTime.setText("4 saat önce");
+                    break;
+                case 7:
+                    remindTime.setText("1 gün önce");
+                    break;
+                case 8:
+                    remindTime.setText("2 gün önce");
+                    break;
+                case 9:
+                    remindTime.setText("1 hafta önce");
+                    break;
+            }
+            eventFreq.setSelection(sharedPreferences.getInt("freqSpin", 0));
         }else{
             eventSave.setText("Güncelle");
             startDate.setText(getIntent().getStringExtra("startDate"));
