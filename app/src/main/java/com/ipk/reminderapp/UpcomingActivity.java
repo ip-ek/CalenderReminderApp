@@ -41,6 +41,7 @@ public class UpcomingActivity extends AppCompatActivity {
     Toolbar toolbar;
     private UpcomeEventDatabase db;
     SharedPreferences sharedPreferences;
+    String selectedFilter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -49,12 +50,10 @@ public class UpcomingActivity extends AppCompatActivity {
         //setNightMode(getApplicationContext(), sharedPreferences.getBoolean("mode",true));
         setContentView(R.layout.activity_upcoming);
 
-
-        //todo: dark light mode seçim form mypref
-
         describe();
         filter();
-        rycFunction();
+        selectedFilter="day";
+        rycFunction(selectedFilter);
 
         goDate.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -69,6 +68,8 @@ public class UpcomingActivity extends AppCompatActivity {
                     @Override
                     public void onDateSet(DatePicker view, int year, int month, int dayOfMonth) {
                         currDate.setText(String.format("%02d/%02d/%04d",dayOfMonth, month+1, year));
+                        rycFunction(selectedFilter);
+
                     }
                 }, year, month,day);
                 datePickerDialog.setButton(DatePickerDialog.BUTTON_POSITIVE, "Ayarla", datePickerDialog);
@@ -125,9 +126,11 @@ public class UpcomingActivity extends AppCompatActivity {
         byDay.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                selectedFilter="day";
                 byDay.setBackgroundColor(getResources().getColor(R.color.colorPrimary));
                 byWeek.setBackground(getResources().getDrawable((R.drawable.left_border)));
                 byMonth.setBackground(getResources().getDrawable((R.drawable.left_border)));
+                rycFunction(selectedFilter);
 
             }
         });
@@ -135,26 +138,40 @@ public class UpcomingActivity extends AppCompatActivity {
         byWeek.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                selectedFilter="week";
                 byDay.setBackgroundColor(getResources().getColor(R.color.white));
                 byWeek.setBackgroundColor(getResources().getColor(R.color.colorPrimary));
                 byMonth.setBackgroundColor(getResources().getColor(R.color.white));
+                rycFunction(selectedFilter);
             }
         });
 
         byMonth.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                selectedFilter="month";
                 byDay.setBackgroundColor(getResources().getColor(R.color.white));
                 byWeek.setBackground(getResources().getDrawable((R.drawable.left_border)));
                 byMonth.setBackgroundColor(getResources().getColor(R.color.colorPrimary));
+                rycFunction(selectedFilter);
             }
         });
     }
 
-    public void rycFunction(){
+    public void rycFunction(String selectedFilter){
         eventRcycler.setLayoutManager(new LinearLayoutManager(this));
-
-        upcomeEvents=new UpcomeEventDao().getAllEvents(db);
+        switch (selectedFilter){
+            case "day":
+                upcomeEvents=new UpcomeEventDao().getDailyEvents(db, currDate.getText().toString(),"");
+                break;
+            case "month":
+                upcomeEvents=new UpcomeEventDao().getMonthEvents(db, currDate.getText().toString(), "");
+                break;
+            case "week":
+                upcomeEvents=new UpcomeEventDao().getWeekEvents(db, currDate.getText().toString(), "");
+                break;
+        }
+        //upcomeEvents=new UpcomeEventDao().getAllEvents(db);
         //TODO: filtreleyerek add yapılacak : filtrele
 
         /*UpcomeEvent e1=new UpcomeEvent(1, "etkinlik","ödev","android ödev teslimi", "26/10/2020","10:00", "27/10/2020","11.00","","","");
@@ -189,7 +206,7 @@ public class UpcomingActivity extends AppCompatActivity {
     @Override
     protected void onResume() {
         super.onResume();
-        rycFunction();
+        rycFunction(selectedFilter);
         setNightMode(getApplication(), sharedPreferences.getBoolean("mode", true));
     }
 

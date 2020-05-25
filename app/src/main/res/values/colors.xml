@@ -5,4 +5,9 @@
     <color name="colorAccent">#D81B60</color>
     <color name="white">#FFFFFF</color>
     <color name="black">#000000</color>
+
+    <color name="event">#2DE931</color>
+    <color name="meeting">#FF0000</color>
+    <color name="bday">#FDF53BDC</color>
+    <color name="anniversary">#0AEEE7</color>
 </resources>

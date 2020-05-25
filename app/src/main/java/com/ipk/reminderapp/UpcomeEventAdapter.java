@@ -66,15 +66,23 @@ public class UpcomeEventAdapter extends RecyclerView.Adapter<UpcomeEventAdapter.
         switch(event.getType()){
             case 0:
                 holder.eventType.setText("Etkinlik");
+                holder.eventColor.setBackgroundColor(context.getColor(R.color.event));
+                /*DrawableCompat.setTint(
+                        DrawableCompat.wrap(holder.eventColor.getDrawable()),
+                        ContextCompat.getColor(context, R.color.meeting)
+                );*/
                 break;
             case 1:
                 holder.eventType.setText("Toplantı");
+                holder.eventColor.setBackgroundColor(context.getColor(R.color.meeting));
                 break;
             case 2:
                 holder.eventType.setText("Doğum Günü");
+                holder.eventColor.setBackgroundColor(context.getColor(R.color.bday));
                 break;
             case 3:
                 holder.eventType.setText("Yıldönümü");
+                holder.eventColor.setBackgroundColor(context.getColor(R.color.anniversary));
                 break;
         }
 
