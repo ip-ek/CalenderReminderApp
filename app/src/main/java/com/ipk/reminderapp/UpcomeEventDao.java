@@ -5,7 +5,10 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.util.Log;
 
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
 
 public class UpcomeEventDao {
     private int id;
@@ -52,6 +55,119 @@ public class UpcomeEventDao {
                     cursor.getInt(cursor.getColumnIndex("parentEvent")));
             Log.d("takip", "label: "+ cursor.getString(cursor.getColumnIndex("label")));
             eventArrayList.add(event);
+        }
+
+        return eventArrayList;
+    }
+
+    public ArrayList<UpcomeEvent> getDailyEvents(UpcomeEventDatabase db, String date, String typeFilter){
+        ArrayList<UpcomeEvent> eventArrayList = new ArrayList<>();
+        SQLiteDatabase sqLiteDatabase= db.getWritableDatabase();
+
+        Cursor cursor = sqLiteDatabase.rawQuery("SELECT * FROM events", null);
+
+        while (cursor.moveToNext()) {
+            if (cursor.getString(cursor.getColumnIndex("startDate")).equals(date)) {
+                UpcomeEvent event = new UpcomeEvent(cursor.getInt(cursor.getColumnIndex("event_id")),
+                        cursor.getInt(cursor.getColumnIndex("type")),
+                        cursor.getString(cursor.getColumnIndex("label")),
+                        cursor.getString(cursor.getColumnIndex("content")),
+                        cursor.getString(cursor.getColumnIndex("startDate")),
+                        cursor.getString(cursor.getColumnIndex("startTime")),
+                        cursor.getString(cursor.getColumnIndex("endDate")),
+                        cursor.getString(cursor.getColumnIndex("endTime")),
+                        cursor.getString(cursor.getColumnIndex("remindTime")),
+                        cursor.getInt(cursor.getColumnIndex("eventFreq")),
+                        cursor.getString(cursor.getColumnIndex("address")),
+                        cursor.getInt(cursor.getColumnIndex("parentEvent")));
+                Log.d("takip", "label: " + cursor.getString(cursor.getColumnIndex("label")));
+                eventArrayList.add(event);
+            }
+        }
+        return eventArrayList;
+    }
+
+    public ArrayList<UpcomeEvent> getMonthEvents(UpcomeEventDatabase db, String date, String typeFilter){
+        ArrayList<UpcomeEvent> eventArrayList = new ArrayList<>();
+        SQLiteDatabase sqLiteDatabase= db.getWritableDatabase();
+
+        Cursor cursor = sqLiteDatabase.rawQuery("SELECT * FROM events", null);
+
+        DateFormat format = new SimpleDateFormat("dd/MM/yyyy");
+        Calendar start = Calendar.getInstance();
+        Calendar end= Calendar.getInstance();
+        String dbDate;
+        try {
+            start.setTime(format.parse(date));
+            end.setTime(format.parse(date));
+            end.add(Calendar.MONTH,1);
+            //TODO: kod tekrarı var hafta ile ://
+            while (cursor.moveToNext()) {
+                //dd/mm/yyyy
+                dbDate=cursor.getString(cursor.getColumnIndex("startDate"));
+                if (dbDate.equals(date) ||(format.parse(dbDate).after(start.getTime()) && format.parse(dbDate).before(end.getTime()))) {
+                    UpcomeEvent event = new UpcomeEvent(cursor.getInt(cursor.getColumnIndex("event_id")),
+                            cursor.getInt(cursor.getColumnIndex("type")),
+                            cursor.getString(cursor.getColumnIndex("label")),
+                            cursor.getString(cursor.getColumnIndex("content")),
+                            cursor.getString(cursor.getColumnIndex("startDate")),
+                            cursor.getString(cursor.getColumnIndex("startTime")),
+                            cursor.getString(cursor.getColumnIndex("endDate")),
+                            cursor.getString(cursor.getColumnIndex("endTime")),
+                            cursor.getString(cursor.getColumnIndex("remindTime")),
+                            cursor.getInt(cursor.getColumnIndex("eventFreq")),
+                            cursor.getString(cursor.getColumnIndex("address")),
+                            cursor.getInt(cursor.getColumnIndex("parentEvent")));
+                    Log.d("takip", "label: " + cursor.getString(cursor.getColumnIndex("label")));
+                    eventArrayList.add(event);
+                }
+            }
+
+        }catch (Exception e){
+            e.printStackTrace();
+        }
+
+        return eventArrayList;
+    }
+
+    public ArrayList<UpcomeEvent> getWeekEvents(UpcomeEventDatabase db, String date, String typeFilter){
+        ArrayList<UpcomeEvent> eventArrayList = new ArrayList<>();
+        SQLiteDatabase sqLiteDatabase= db.getWritableDatabase();
+
+        Cursor cursor = sqLiteDatabase.rawQuery("SELECT * FROM events", null);
+
+        DateFormat format = new SimpleDateFormat("dd/MM/yyyy");
+        Calendar start = Calendar.getInstance();
+        Calendar end= Calendar.getInstance();
+        String dbDate;
+        try {
+            start.setTime(format.parse(date));
+            end.setTime(format.parse(date));
+            end.add(Calendar.DATE,7);
+
+            while (cursor.moveToNext()) {
+                //dd/mm/yyyy
+                dbDate=cursor.getString(cursor.getColumnIndex("startDate"));
+                if (dbDate.equals(date) ||(format.parse(dbDate).after(start.getTime()) && format.parse(dbDate).before(end.getTime()))) {
+                    UpcomeEvent event = new UpcomeEvent(cursor.getInt(cursor.getColumnIndex("event_id")),
+                            cursor.getInt(cursor.getColumnIndex("type")),
+                            cursor.getString(cursor.getColumnIndex("label")),
+                            cursor.getString(cursor.getColumnIndex("content")),
+                            cursor.getString(cursor.getColumnIndex("startDate")),
+                            cursor.getString(cursor.getColumnIndex("startTime")),
+                            cursor.getString(cursor.getColumnIndex("endDate")),
+                            cursor.getString(cursor.getColumnIndex("endTime")),
+                            cursor.getString(cursor.getColumnIndex("remindTime")),
+                            cursor.getInt(cursor.getColumnIndex("eventFreq")),
+                            cursor.getString(cursor.getColumnIndex("address")),
+                            cursor.getInt(cursor.getColumnIndex("parentEvent")));
+                    Log.d("takip", "label: " + cursor.getString(cursor.getColumnIndex("label")));
+                    eventArrayList.add(event);
+                }
+            }
+
+        }catch (Exception e){
+            e.printStackTrace();
         }
 
         return eventArrayList;
