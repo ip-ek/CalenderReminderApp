@@ -2,12 +2,16 @@ package com.ipk.reminderapp;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.app.AppCompatDelegate;
 import androidx.appcompat.widget.Toolbar;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import android.app.DatePickerDialog;
+import android.app.UiModeManager;
+import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.Menu;
@@ -36,10 +40,13 @@ public class UpcomingActivity extends AppCompatActivity {
 
     Toolbar toolbar;
     private UpcomeEventDatabase db;
+    SharedPreferences sharedPreferences;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        sharedPreferences=getSharedPreferences("myPref", Context.MODE_PRIVATE);
         super.onCreate(savedInstanceState);
+        //setNightMode(getApplicationContext(), sharedPreferences.getBoolean("mode",true));
         setContentView(R.layout.activity_upcoming);
 
 
@@ -167,11 +174,23 @@ public class UpcomingActivity extends AppCompatActivity {
         eventRcycler.setAdapter(eventAdapter);
     }
 
+    public static void setNightMode(Context target , boolean state){
+
+        if (state) {
+            //uiManager.enableCarMode(0);
+            AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES);
+        } else {
+            // uiManager.disableCarMode(0);
+            AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO);
+        }
+    }
+
     //kayıttan sonra dönünce direk görüntüleme :))
     @Override
     protected void onResume() {
         super.onResume();
         rycFunction();
+        setNightMode(getApplication(), sharedPreferences.getBoolean("mode", true));
     }
 
     //settings için

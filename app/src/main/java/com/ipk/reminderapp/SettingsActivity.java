@@ -1,5 +1,6 @@
 package com.ipk.reminderapp;
 
+import android.app.UiModeManager;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -20,6 +21,7 @@ import java.util.ArrayList;
 
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.app.AppCompatDelegate;
 
 public class SettingsActivity extends AppCompatActivity {
     Spinner timeSpin, freqSpin;
@@ -152,7 +154,6 @@ public class SettingsActivity extends AppCompatActivity {
                     //RingtoneManager.setActualDefaultRingtoneUri(SettingsActivity.this, RingtoneManager.TYPE_NOTIFICATION, uri);
                     Log.d("takip", "Ringtone:" + ringTonePath);
                     ringTone.setText(ringTonePath);
-                    //TODO: ringtonePath ekrana alındığı yazılsın
                     /*Uri alarmUri = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION);
                     Ringtone ringtone = RingtoneManager.getRingtone(getBaseContext(), alarmUri);
                     ringtone.play();  */

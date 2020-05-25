@@ -7,7 +7,7 @@
     </item>
     <item android:left = "4dp">
         <shape android:shape = "rectangle">
-            <solid android:color = "#FFF"/>
+            <solid android:color = "@color/white"/>
         </shape>
     </item>
 </layer-list>
