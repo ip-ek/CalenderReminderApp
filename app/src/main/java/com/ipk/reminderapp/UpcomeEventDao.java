@@ -289,10 +289,13 @@ public class UpcomeEventDao {
             Log.d("alarmm", codes);
             String[] codeArr=codes.split(",");
             for(int i=0; i<codeArr.length; i++){
-                Intent intent = new Intent(context.getApplicationContext(), AlarmReceiver.class);
-                PendingIntent pendingIntent = PendingIntent.getBroadcast(context.getApplicationContext(), Integer.valueOf(codeArr[i]), intent, 0);
-                AlarmManager alarmManager = (AlarmManager) context.getSystemService(ALARM_SERVICE);
-                alarmManager.cancel(pendingIntent);
+                if(!codeArr[i].equals("")){
+                    Intent intent = new Intent(context.getApplicationContext(), AlarmReceiver.class);
+                    PendingIntent pendingIntent = PendingIntent.getBroadcast(context.getApplicationContext(), Integer.valueOf(codeArr[i]), intent, 0);
+                    AlarmManager alarmManager = (AlarmManager) context.getSystemService(ALARM_SERVICE);
+                    alarmManager.cancel(pendingIntent);
+                }
+
             }
         }
     }
