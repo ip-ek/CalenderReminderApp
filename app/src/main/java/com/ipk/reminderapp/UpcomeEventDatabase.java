@@ -25,7 +25,8 @@ public class UpcomeEventDatabase extends SQLiteOpenHelper {
                 "remindTime TEXT,"+
                 "eventFreq INTEGER,"+
                 "address TEXT,"+
-                "parentEvent INTEGER" +
+                "parentEvent INTEGER," +
+                "counter INTEGER" +
                 ");");
     }
 

@@ -54,6 +54,24 @@ public class ReminderActivity extends AppCompatActivity {
         numberPicker.setMinValue(0);
         numberPicker.setMaxValue(100);
 
+        Log.d("dene",""+getIntent().getIntExtra("counter",0));
+        numberPicker.setValue(getIntent().getIntExtra("counter",0));
+
+        Log.d("remindTime", getIntent().getStringExtra("remindTime"));
+        String[] str= getIntent().getStringExtra("remindTime").split(",");
+        ArrayList<String> remindArr=new ArrayList<>();
+        for(int i=0; i<str.length; i++){
+            Log.d("remindTime::" , str[i]);
+            remindArr.add(str[i]);
+        }
+        //önceden işaretlenmişleri getirir.
+        for(int j=0; j<remindArr.size();j++){
+            checkArr.get(timeArr.indexOf(remindArr.get(j))).setChecked(true);
+        }
+
+
+
+
         NumberPicker.OnValueChangeListener onValueChangeListener =
                 new 	NumberPicker.OnValueChangeListener(){
                     @Override

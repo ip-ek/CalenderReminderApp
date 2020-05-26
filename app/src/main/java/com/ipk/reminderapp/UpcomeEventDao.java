@@ -27,6 +27,7 @@ public class UpcomeEventDao {
         values.put("eventFreq", event.getEnventFreq());
         values.put("address", event.getAddress());
         values.put("parentEvent", event.getParent());
+        values.put("counter", event.getCounter());
         id=(int)sqLiteDatabase.insertOrThrow("events",null, values);
         sqLiteDatabase.close();
 
@@ -52,7 +53,8 @@ public class UpcomeEventDao {
                     cursor.getString(cursor.getColumnIndex("remindTime")),
                     cursor.getInt(cursor.getColumnIndex("eventFreq")),
                     cursor.getString(cursor.getColumnIndex("address")),
-                    cursor.getInt(cursor.getColumnIndex("parentEvent")));
+                    cursor.getInt(cursor.getColumnIndex("parentEvent")),
+                    cursor.getInt(cursor.getColumnIndex("counter")));
             Log.d("takip", "label: "+ cursor.getString(cursor.getColumnIndex("label")));
             eventArrayList.add(event);
         }
@@ -80,7 +82,8 @@ public class UpcomeEventDao {
                         cursor.getString(cursor.getColumnIndex("remindTime")),
                         cursor.getInt(cursor.getColumnIndex("eventFreq")),
                         cursor.getString(cursor.getColumnIndex("address")),
-                        cursor.getInt(cursor.getColumnIndex("parentEvent")));
+                        cursor.getInt(cursor.getColumnIndex("parentEvent")),
+                        cursor.getInt(cursor.getColumnIndex("counter")));
                 Log.d("takip", "label: " + cursor.getString(cursor.getColumnIndex("label")));
                 eventArrayList.add(event);
             }
@@ -119,7 +122,8 @@ public class UpcomeEventDao {
                             cursor.getString(cursor.getColumnIndex("remindTime")),
                             cursor.getInt(cursor.getColumnIndex("eventFreq")),
                             cursor.getString(cursor.getColumnIndex("address")),
-                            cursor.getInt(cursor.getColumnIndex("parentEvent")));
+                            cursor.getInt(cursor.getColumnIndex("parentEvent")),
+                            cursor.getInt(cursor.getColumnIndex("counter")));
                     Log.d("takip", "label: " + cursor.getString(cursor.getColumnIndex("label")));
                     eventArrayList.add(event);
                 }
@@ -163,7 +167,8 @@ public class UpcomeEventDao {
                             cursor.getString(cursor.getColumnIndex("remindTime")),
                             cursor.getInt(cursor.getColumnIndex("eventFreq")),
                             cursor.getString(cursor.getColumnIndex("address")),
-                            cursor.getInt(cursor.getColumnIndex("parentEvent")));
+                            cursor.getInt(cursor.getColumnIndex("parentEvent")),
+                            cursor.getInt(cursor.getColumnIndex("counter")));
                     Log.d("takip", "label: " + cursor.getString(cursor.getColumnIndex("label")));
                     eventArrayList.add(event);
                 }
@@ -203,6 +208,7 @@ public class UpcomeEventDao {
         values.put("eventFreq", event.getEnventFreq());
         values.put("address", event.getAddress());
         values.put("parentEvent", parent);
+        values.put("counter", event.getCounter());
         sqLiteDatabase.update("events",values, "event_id=?", new String[]{String.valueOf(eventID)});
         sqLiteDatabase.close();
     }

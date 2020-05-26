@@ -225,11 +225,12 @@ public class EventActivity extends AppCompatActivity {
                 header.getText().toString(),content.getText().toString(),
                 startDate.getText().toString(),startTime.getText().toString(),
                 endDate.getText().toString(),endTime.getText().toString(),
-                "",
+                remindTime.getText().toString(),
                 eventFreq.getSelectedItemPosition(),
-                eventLoc.getText().toString(),0);
+                eventLoc.getText().toString(),0, repeatCount);
         int id=new UpcomeEventDao().addEvent(db, event);
         Toast.makeText(getApplicationContext(),id+ " numarası ile kaydedildi",Toast.LENGTH_SHORT).show();
+        Log.d("remindTime", "kayıt: "+event.getRemindTime());
         //TODO: if(event==-1)
         //repeatCount
         event.setEventID(id);
@@ -273,7 +274,7 @@ public class EventActivity extends AppCompatActivity {
                         format.format(start.getTime()), parentEvent.getStartTime(),
                         format.format(end.getTime()), parentEvent.getEndTime(),
                         parentEvent.getRemindTime(),
-                        0, parentEvent.getAddress(), parentEvent.getEventID());
+                        0, parentEvent.getAddress(), parentEvent.getEventID(),repeatCount);
                 int id=new UpcomeEventDao().addEvent(db, newEvent);
                 newEvent.setEventID(id);
             }
@@ -289,9 +290,9 @@ public class EventActivity extends AppCompatActivity {
                 header.getText().toString(),content.getText().toString(),
                 startDate.getText().toString(),startTime.getText().toString(),
                 endDate.getText().toString(),endTime.getText().toString(),
-                "",
+                remindTime.getText().toString(),
                 eventFreq.getSelectedItemPosition(),
-                eventLoc.getText().toString(), getIntent().getIntExtra("parentEvent",0));
+                eventLoc.getText().toString(), getIntent().getIntExtra("parentEvent",0),repeatCount);
         new UpcomeEventDao().updateEvent(db,getIntent().getIntExtra("eventID",0),event,getIntent().getIntExtra("parentEvent",0));
         Toast.makeText(getApplicationContext(),+ getIntent().getIntExtra("eventID",0)+" numarası ile güncelendi",Toast.LENGTH_SHORT).show();
         if(eventFreq.getSelectedItemPosition()!=0){
@@ -313,13 +314,13 @@ public class EventActivity extends AppCompatActivity {
         }else if(requestCode==444){
             if(resultCode==RESULT_OK){
                 if(!data.getStringExtra("reminder").equals("Hiçbir zaman")){
-                    repeatCount=data.getIntExtra("numberPicker", 1);
+                    repeatCount=data.getIntExtra("numberPicker", 0);
                 }
                 remindTime.setText(data.getStringExtra("reminder"));
-                Log.d("takip", "alınan str: "+ data.getStringExtra("reminder"));
+                Log.d("remindTime", "alınan str: "+ data.getStringExtra("reminder"));
 
             }else if(resultCode==RESULT_CANCELED){
-                Toast.makeText(getApplicationContext(), "Tekrar bilgisi alınmadı", Toast.LENGTH_SHORT).show();
+                Toast.makeText(getApplicationContext(), "Kayıt yapılmadı", Toast.LENGTH_SHORT).show();
             }
         }
         super.onActivityResult(requestCode, resultCode, data);
@@ -388,6 +389,15 @@ public class EventActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 Intent intent=new Intent(EventActivity.this, ReminderActivity.class);
+                intent.putExtra("saveorupdate", getIntent().getIntExtra("eventID",0));
+                if(0!=getIntent().getIntExtra("eventID",0)){
+                    Log.d("dene", getIntent().getIntExtra("counter",0)+"");
+                    intent.putExtra("counter", getIntent().getIntExtra("counter",0));
+                }else{
+                    //yeni kayıtta 0
+                    intent.putExtra("counter", 0);
+                }
+                intent.putExtra("remindTime", remindTime.getText().toString());
                 startActivityForResult(intent, 444);
             }
         });
@@ -445,7 +455,7 @@ public class EventActivity extends AppCompatActivity {
             header.setText(getIntent().getStringExtra("label"));
             content.setText(getIntent().getStringExtra("content"));
             //eventColor.setText(getIntent().getStringExtra());
-            //remindTime.setText(getIntent().getStringExtra());"remindTime"
+            remindTime.setText(getIntent().getStringExtra("remindTime"));
             //spinner
             eventFreq.setSelection(getIntent().getIntExtra("enventFreq", 0));
             eventType.setSelection(getIntent().getIntExtra("type", 0));

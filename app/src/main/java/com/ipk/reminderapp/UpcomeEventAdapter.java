@@ -168,6 +168,7 @@ public class UpcomeEventAdapter extends RecyclerView.Adapter<UpcomeEventAdapter.
                 intent.putExtra("enventFreq", event.getEnventFreq());
                 intent.putExtra("address", event.getAddress());
                 intent.putExtra("eventParent", event.getParent());
+                intent.putExtra("counter", event.getCounter());
                 context.startActivity(intent);
             }
         });
