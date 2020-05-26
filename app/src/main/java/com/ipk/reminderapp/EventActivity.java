@@ -172,14 +172,14 @@ public class EventActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 Calendar currentTime =Calendar.getInstance();
-                final int hour= currentTime.get(Calendar.HOUR_OF_DAY);
+                int hour= currentTime.get(Calendar.HOUR_OF_DAY);
                 int minute= currentTime.get(Calendar.MINUTE);
 
                 TimePickerDialog timePickerDialog;
                 timePickerDialog=new TimePickerDialog(EventActivity.this, new TimePickerDialog.OnTimeSetListener() {
                     @Override
                     public void onTimeSet(TimePicker view, int hourOfDay, int minute) {
-                        endTime.setText(String.format("%02d:%02d", hour,minute));
+                        endTime.setText(String.format("%02d:%02d", hourOfDay,minute));
                     }
                 },hour,minute,true);
                 timePickerDialog.setButton(TimePickerDialog.BUTTON_NEGATIVE, "İptal", timePickerDialog);
