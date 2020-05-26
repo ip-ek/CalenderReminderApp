@@ -62,6 +62,29 @@ public class UpcomeEventDao {
         return eventArrayList;
     }
 
+    public UpcomeEvent getEvent(UpcomeEventDatabase db, int id){
+        UpcomeEvent event=new UpcomeEvent();
+        SQLiteDatabase sqLiteDatabase= db.getWritableDatabase();
+        Cursor cursor = sqLiteDatabase.rawQuery("SELECT * FROM events WHERE event_id="+id, null);
+        while(cursor.moveToNext()){
+            UpcomeEvent event2 =new UpcomeEvent(cursor.getInt(cursor.getColumnIndex("event_id")),
+                    cursor.getInt(cursor.getColumnIndex("type")),
+                    cursor.getString(cursor.getColumnIndex("label")),
+                    cursor.getString(cursor.getColumnIndex("content")),
+                    cursor.getString(cursor.getColumnIndex("startDate")),
+                    cursor.getString(cursor.getColumnIndex("startTime")),
+                    cursor.getString(cursor.getColumnIndex("endDate")),
+                    cursor.getString(cursor.getColumnIndex("endTime")),
+                    cursor.getString(cursor.getColumnIndex("remindTime")),
+                    cursor.getInt(cursor.getColumnIndex("eventFreq")),
+                    cursor.getString(cursor.getColumnIndex("address")),
+                    cursor.getInt(cursor.getColumnIndex("parentEvent")),
+                    cursor.getInt(cursor.getColumnIndex("counter")));
+            event=event2;
+        }
+        return event;
+    }
+
     public ArrayList<UpcomeEvent> getDailyEvents(UpcomeEventDatabase db, String date, ArrayList<Integer> typeFilter){
         ArrayList<UpcomeEvent> eventArrayList = new ArrayList<>();
         SQLiteDatabase sqLiteDatabase= db.getWritableDatabase();

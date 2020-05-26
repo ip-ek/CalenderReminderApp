@@ -156,19 +156,38 @@ public class UpcomeEventAdapter extends RecyclerView.Adapter<UpcomeEventAdapter.
             public void onClick(View v) {
                 Intent intent=new Intent(context,EventActivity.class);
                 //eventID 0dan büyüktür
-                intent.putExtra("eventID", event.getEventID());
-                intent.putExtra("type", event.getType());
-                intent.putExtra("label", event.getLabel());
-                intent.putExtra("content", event.getContent());
-                intent.putExtra("startDate", event.getStartDate());
-                intent.putExtra("startTime", event.getStartTime());
-                intent.putExtra("endDate", event.getEndDate());
-                intent.putExtra("endTime", event.getEndTime());
-                intent.putExtra("remindTime", event.getRemindTime());
-                intent.putExtra("enventFreq", event.getEnventFreq());
-                intent.putExtra("address", event.getAddress());
-                intent.putExtra("eventParent", event.getParent());
-                intent.putExtra("counter", event.getCounter());
+                if(event.getParent()==0){
+                    intent.putExtra("eventID", event.getEventID());
+                    intent.putExtra("type", event.getType());
+                    intent.putExtra("label", event.getLabel());
+                    intent.putExtra("content", event.getContent());
+                    intent.putExtra("startDate", event.getStartDate());
+                    intent.putExtra("startTime", event.getStartTime());
+                    intent.putExtra("endDate", event.getEndDate());
+                    intent.putExtra("endTime", event.getEndTime());
+                    intent.putExtra("remindTime", event.getRemindTime());
+                    intent.putExtra("enventFreq", event.getEnventFreq());
+                    intent.putExtra("address", event.getAddress());
+                    intent.putExtra("eventParent", event.getParent());
+                    intent.putExtra("counter", event.getCounter());
+                }else{
+                    db = new UpcomeEventDatabase(context);
+                    UpcomeEvent parentEvent=new UpcomeEventDao().getEvent(db, event.getParent());
+                    intent.putExtra("eventID", parentEvent.getEventID());
+                    intent.putExtra("type", parentEvent.getType());
+                    intent.putExtra("label", parentEvent.getLabel());
+                    intent.putExtra("content", parentEvent.getContent());
+                    intent.putExtra("startDate", parentEvent.getStartDate());
+                    intent.putExtra("startTime", parentEvent.getStartTime());
+                    intent.putExtra("endDate", parentEvent.getEndDate());
+                    intent.putExtra("endTime", parentEvent.getEndTime());
+                    intent.putExtra("remindTime", parentEvent.getRemindTime());
+                    intent.putExtra("enventFreq", parentEvent.getEnventFreq());
+                    intent.putExtra("address", parentEvent.getAddress());
+                    intent.putExtra("eventParent", parentEvent.getParent());
+                    intent.putExtra("counter", parentEvent.getCounter());
+                }
+                Toast.makeText(context, "Tekrar eden etkinlik seçildi",Toast.LENGTH_SHORT).show();
                 context.startActivity(intent);
             }
         });
