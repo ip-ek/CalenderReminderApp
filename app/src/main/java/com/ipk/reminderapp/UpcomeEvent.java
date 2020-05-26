@@ -4,13 +4,13 @@ import androidx.annotation.NonNull;
 
 public class UpcomeEvent {
     //model
-    private String label, content, startDate, startTime, endDate, endTime, remindTime, address;
+    private String label, content, startDate, startTime, endDate, endTime, remindTime, address, alarm;
     private int eventID, enventFreq, type, parent, counter;
 
     public UpcomeEvent() {
     }
 
-    public UpcomeEvent(int eventID, int type, String label, String content, String startDate, String startTime, String endDate, String endTime, String remindTime, int enventFreq, String address, int parent, int counter) {
+    public UpcomeEvent(int eventID, int type, String label, String content, String startDate, String startTime, String endDate, String endTime, String remindTime, int enventFreq, String address, int parent, int counter, String alarm) {
         this.eventID = eventID;
         this.type = type;
         this.label = label;
@@ -24,6 +24,7 @@ public class UpcomeEvent {
         this.address = address;
         this.parent=parent;
         this.counter=counter;
+        this.alarm=alarm;
     }
 
     public int getType() {
@@ -128,6 +129,14 @@ public class UpcomeEvent {
 
     public void setCounter(int counter) {
         this.counter = counter;
+    }
+
+    public String getAlarm() {
+        return alarm;
+    }
+
+    public void setAlarm(String alarm) {
+        this.alarm = alarm;
     }
 
     @NonNull

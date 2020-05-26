@@ -117,7 +117,7 @@ public class UpcomeEventAdapter extends RecyclerView.Adapter<UpcomeEventAdapter.
                                         Toast.makeText(context, event.getLabel()+" silindi", Toast.LENGTH_SHORT).show();
 
                                         db = new UpcomeEventDatabase(context);
-                                        new UpcomeEventDao().deleteEvent(db, event.getEventID());
+                                        new UpcomeEventDao().deleteEvent(db, event.getEventID(), context);
                                         //TODO: diğerleri de silinmeli
                                     }
                                 });
@@ -170,6 +170,7 @@ public class UpcomeEventAdapter extends RecyclerView.Adapter<UpcomeEventAdapter.
                     intent.putExtra("address", event.getAddress());
                     intent.putExtra("eventParent", event.getParent());
                     intent.putExtra("counter", event.getCounter());
+                    intent.putExtra("alarm", event.getAlarm());
                 }else{
                     db = new UpcomeEventDatabase(context);
                     UpcomeEvent parentEvent=new UpcomeEventDao().getEvent(db, event.getParent());
@@ -186,6 +187,7 @@ public class UpcomeEventAdapter extends RecyclerView.Adapter<UpcomeEventAdapter.
                     intent.putExtra("address", parentEvent.getAddress());
                     intent.putExtra("eventParent", parentEvent.getParent());
                     intent.putExtra("counter", parentEvent.getCounter());
+                    intent.putExtra("alarm",parentEvent.getAlarm());
                 }
                 Toast.makeText(context, "Tekrar eden etkinlik seçildi",Toast.LENGTH_SHORT).show();
                 context.startActivity(intent);

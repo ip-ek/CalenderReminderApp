@@ -29,6 +29,8 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+        <activity android:name=".UpcomeEventDao"/>
+        <receiver android:name=".AlarmReceiver" />
 
         <meta-data
             android:name="com.google.android.geo.API_KEY"

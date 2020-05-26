@@ -3,8 +3,10 @@ package com.ipk.reminderapp;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.app.AlarmManager;
 import android.app.DatePickerDialog;
 import android.app.Dialog;
+import android.app.PendingIntent;
 import android.app.TimePickerDialog;
 import android.content.Context;
 import android.content.Intent;
@@ -46,6 +48,9 @@ public class EventActivity extends AppCompatActivity {
     EditText header, content;
     ImageView eventColor, locDelete, eventLocImg;
     Button eventSave;
+    ArrayList<String> timeArr=new ArrayList<>();
+
+    public static int REQUEST_CODE=0;
 
     //settings activity'ninkini kullansak onCreate olmazsa sorun
     ArrayList<String> typeArr = new ArrayList<String>();
@@ -53,8 +58,10 @@ public class EventActivity extends AppCompatActivity {
     ArrayAdapter freqAdapter;
     ArrayAdapter typeAdapter;
 
+
     UpcomeEventDatabase db;
-    SharedPreferences sharedPreferences;
+    SharedPreferences sharedPreferences, requestShared;
+    SharedPreferences.Editor editor;
 
     int repeatCount=0;
 
@@ -207,14 +214,30 @@ public class EventActivity extends AppCompatActivity {
         eventSave.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                int id;
-                if(0==(id=getIntent().getIntExtra("eventID",0))){
-                    addEvent();
-                }else{
-                    updateEvent();
+                DateFormat format = new SimpleDateFormat("dd/MM/yyyy HH:mm");
+                final Calendar start = Calendar.getInstance();
+                Calendar end= Calendar.getInstance();
+                try {
+                    end.setTime(format.parse((endDate.getText().toString() + " " + endTime.getText().toString())));
+                    start.setTime(format.parse(startDate.getText().toString()+" "+ startTime.getText().toString()));
+                }catch (Exception e){
+                    e.printStackTrace();
                 }
-                //Toast.makeText(getApplicationContext(), "Etkinlik kaydedildi", Toast.LENGTH_SHORT).show();
-                finish();
+
+                int id;
+                if(startDate.getText().equals("")){
+                    Toast.makeText(getApplicationContext(), "Başlangıç tarihi boş bırakılamaz!",Toast.LENGTH_LONG).show();
+                }else if(end.before(start)){
+                    Toast.makeText(getApplicationContext(), "Bitiş tarihi/zamanı başlangıçtan önce olamaz",Toast.LENGTH_LONG).show();
+                }else{
+                    if(0==(id=getIntent().getIntExtra("eventID",0))){
+                        addEvent();
+                    }else{
+                        updateEvent();
+                    }
+                    //Toast.makeText(getApplicationContext(), "Etkinlik kaydedildi", Toast.LENGTH_SHORT).show();
+                    finish();
+                }
             }
         });
     }
@@ -227,7 +250,8 @@ public class EventActivity extends AppCompatActivity {
                 endDate.getText().toString(),endTime.getText().toString(),
                 remindTime.getText().toString(),
                 eventFreq.getSelectedItemPosition(),
-                eventLoc.getText().toString(),0, repeatCount);
+                eventLoc.getText().toString(),0, repeatCount,"");
+        event.setAlarm(alarm(startDate.getText().toString(), startTime.getText().toString(),remindTime.getText().toString()));
         int id=new UpcomeEventDao().addEvent(db, event);
         Toast.makeText(getApplicationContext(),id+ " numarası ile kaydedildi",Toast.LENGTH_SHORT).show();
         Log.d("remindTime", "kayıt: "+event.getRemindTime());
@@ -274,7 +298,8 @@ public class EventActivity extends AppCompatActivity {
                         format.format(start.getTime()), parentEvent.getStartTime(),
                         format.format(end.getTime()), parentEvent.getEndTime(),
                         parentEvent.getRemindTime(),
-                        0, parentEvent.getAddress(), parentEvent.getEventID(),repeatCount);
+                        0, parentEvent.getAddress(), parentEvent.getEventID(),repeatCount,"");
+                newEvent.setAlarm(alarm(start.getTime().toString(),parentEvent.getStartTime(),parentEvent.getRemindTime()));
                 int id=new UpcomeEventDao().addEvent(db, newEvent);
                 newEvent.setEventID(id);
             }
@@ -283,17 +308,97 @@ public class EventActivity extends AppCompatActivity {
         }
     }
 
+    private String alarm(String startDate, String startTime, String remindTime){
+        DateFormat format = new SimpleDateFormat("dd/MM/yyyy HH:mm");
+        Calendar start = Calendar.getInstance();
+        String strAlarm="";
+        try{
+            start.setTime(format.parse((startDate+" "+startTime)));
+            String[] remindStr=remindTime.split(",");
+            for(int i=0; i<remindStr.length; i++){
+                switch (remindStr[i]){
+                    case "Hiçbir zaman":
+                        break;
+                    case "0 dakika önce":
+                        strAlarm=strAlarm+""+setAlarm(start)+",";
+                        break;
+                    case "5 dakika önce":
+                        start.add(Calendar.MINUTE, -5);
+                        strAlarm=strAlarm+""+setAlarm(start)+",";
+                        break;
+                    case "15 dakika önce":
+                        start.add(Calendar.MINUTE, -15);
+                        strAlarm=strAlarm+""+setAlarm(start)+",";
+                        break;
+                    case "30 dakika önce":
+                        start.add(Calendar.MINUTE, -30);
+                        strAlarm=strAlarm+""+setAlarm(start)+",";
+                        break;
+                    case "1 saat önce":
+                        start.add(Calendar.HOUR_OF_DAY, -1);
+                        strAlarm=strAlarm+""+setAlarm(start)+",";
+                        break;
+                    case "4 saat önce":
+                        start.add(Calendar.HOUR_OF_DAY, -4);
+                        strAlarm=strAlarm+""+setAlarm(start)+",";
+                        break;
+                    case "1 gün önce":
+                        start.add(Calendar.DAY_OF_MONTH, -1);
+                        strAlarm=strAlarm+""+setAlarm(start)+",";
+                        break;
+                    case "2 gün önce":
+                        start.add(Calendar.DAY_OF_MONTH, -2);
+                        strAlarm=strAlarm+""+setAlarm(start)+",";
+                        break;
+                    case "1 hafta önce":
+                        start.add(Calendar.DAY_OF_MONTH, -7);
+                        strAlarm=strAlarm+""+setAlarm(start)+",";
+                        break;
+                }
+            }
+        }catch (Exception e){
+            e.printStackTrace();
+        }
+        Log.d("alarmm", "üretilen:"+strAlarm);
+        return strAlarm;
+    }
+
+    private int setAlarm(Calendar calendar){
+        editor.putInt("REQUEST_CODE", requestShared.getInt("REQUEST_CODE", 0)+1);
+        editor.apply();
+        editor.commit();
+        //REQUEST_CODE++;
+        //dd/MM/yyyy  dd:ss
+        Calendar alarmCalender = Calendar.getInstance();
+        alarmCalender.set(Calendar.YEAR, calendar.get(Calendar.YEAR));
+        alarmCalender.set(Calendar.MONTH, calendar.get(Calendar.MONTH));
+        alarmCalender.set(Calendar.DAY_OF_MONTH, calendar.get(Calendar.DAY_OF_MONTH));
+        alarmCalender.set(Calendar.HOUR_OF_DAY, calendar.get(Calendar.HOUR_OF_DAY));
+        alarmCalender.set(Calendar.MINUTE, calendar.get(Calendar.MINUTE));
+        alarmCalender.set(Calendar.SECOND, 0);
+        alarmCalender.set(Calendar.MILLISECOND, 0);
+
+        Toast.makeText(getApplicationContext(),"Alarm Ayarlandı!",Toast.LENGTH_SHORT).show();
+
+        Intent intent = new Intent(getBaseContext(), AlarmReceiver.class);
+        PendingIntent pendingIntent = PendingIntent.getBroadcast(getBaseContext(), requestShared.getInt("REQUEST_CODE", 0), intent, 0);
+        AlarmManager alarmManager = (AlarmManager)getSystemService(Context.ALARM_SERVICE);
+        alarmManager.set(AlarmManager.RTC_WAKEUP, alarmCalender.getTimeInMillis(), pendingIntent);
+        return requestShared.getInt("REQUEST_CODE", 0);
+    }
+
     public void updateEvent(){
         //önce eski repeatleri sil
-        new UpcomeEventDao().deleteRepeatedEvent(db,getIntent().getIntExtra("eventID",0));
+        new UpcomeEventDao().deleteRepeatedEvent(db,getIntent().getIntExtra("eventID",0),getApplicationContext());
         UpcomeEvent event= new UpcomeEvent(getIntent().getIntExtra("eventID",0),eventType.getSelectedItemPosition(),
                 header.getText().toString(),content.getText().toString(),
                 startDate.getText().toString(),startTime.getText().toString(),
                 endDate.getText().toString(),endTime.getText().toString(),
                 remindTime.getText().toString(),
                 eventFreq.getSelectedItemPosition(),
-                eventLoc.getText().toString(), getIntent().getIntExtra("parentEvent",0),repeatCount);
-        new UpcomeEventDao().updateEvent(db,getIntent().getIntExtra("eventID",0),event,getIntent().getIntExtra("parentEvent",0));
+                eventLoc.getText().toString(), getIntent().getIntExtra("parentEvent",0),repeatCount, "");
+        event.setAlarm(alarm(startDate.getText().toString(), startTime.getText().toString(),remindTime.getText().toString()));
+        new UpcomeEventDao().updateEvent(db,getIntent().getIntExtra("eventID",0),event,getIntent().getIntExtra("parentEvent",0),getApplicationContext());
         Toast.makeText(getApplicationContext(),+ getIntent().getIntExtra("eventID",0)+" numarası ile güncelendi",Toast.LENGTH_SHORT).show();
         if(eventFreq.getSelectedItemPosition()!=0){
             addRepeatedEvent(event,eventFreq.getSelectedItemPosition());
@@ -313,9 +418,9 @@ public class EventActivity extends AppCompatActivity {
             }
         }else if(requestCode==444){
             if(resultCode==RESULT_OK){
-                if(!data.getStringExtra("reminder").equals("Hiçbir zaman")){
+                //if(!data.getStringExtra("reminder").equals("Hiçbir zaman")){
                     repeatCount=data.getIntExtra("numberPicker", 0);
-                }
+                //}
                 remindTime.setText(data.getStringExtra("reminder"));
                 Log.d("remindTime", "alınan str: "+ data.getStringExtra("reminder"));
 
@@ -330,6 +435,9 @@ public class EventActivity extends AppCompatActivity {
 
         db = new UpcomeEventDatabase(this);
         sharedPreferences = getSharedPreferences("myPref", Context.MODE_PRIVATE);
+        requestShared=getSharedPreferences("reqPref", Context.MODE_PRIVATE);
+        editor = requestShared.edit();
+        setTimeArr();
 
         startDate=findViewById(R.id.event_start_date);
         startTime=findViewById(R.id.event_start_time);
@@ -359,7 +467,7 @@ public class EventActivity extends AppCompatActivity {
 
     public void setTimeArr(){
         //strings'ten çekmelisin
-        /*timeArr.add("Hiçbir zaman");
+        timeArr.add("Hiçbir zaman");
         timeArr.add("0 dakika önce");
         timeArr.add("5 dakika önce");
         timeArr.add("15 dakika önce");
@@ -368,7 +476,7 @@ public class EventActivity extends AppCompatActivity {
         timeArr.add("4 saat önce");
         timeArr.add("1 gün önce");
         timeArr.add("2 gün önce");
-        timeArr.add("1 hafta önce");*/
+        timeArr.add("1 hafta önce");
     }
     public void setFreqArr(){
         freqArr.add("Yok");
