@@ -13,7 +13,7 @@ import java.util.Calendar;
 public class UpcomeEventDao {
     private int id;
 
-    public int addEvent(UpcomeEventDatabase db, UpcomeEvent event, int parent){
+    public int addEvent(UpcomeEventDatabase db, UpcomeEvent event){
         SQLiteDatabase sqLiteDatabase= db.getWritableDatabase();
         ContentValues values= new ContentValues();   //veritanına verilerin yazılması için gerekn değerleri tutar.
         values.put("type", event.getType());
@@ -26,7 +26,7 @@ public class UpcomeEventDao {
         values.put("remindTime", event.getRemindTime());
         values.put("eventFreq", event.getEnventFreq());
         values.put("address", event.getAddress());
-        values.put("parentEvent", parent);
+        values.put("parentEvent", event.getParent());
         id=(int)sqLiteDatabase.insertOrThrow("events",null, values);
         sqLiteDatabase.close();
 
@@ -179,6 +179,13 @@ public class UpcomeEventDao {
     public void deleteEvent(UpcomeEventDatabase db, int eventID){
         SQLiteDatabase sqLiteDatabase= db.getWritableDatabase();
         sqLiteDatabase.delete("events", "event_id=?", new String[]{String.valueOf(eventID)});
+        deleteRepeatedEvent(db, eventID);
+        sqLiteDatabase.close();
+    }
+
+    public void deleteRepeatedEvent(UpcomeEventDatabase db, int parentID){
+        SQLiteDatabase sqLiteDatabase= db.getWritableDatabase();
+        sqLiteDatabase.delete("events", "parentEvent=?", new String[]{String.valueOf(parentID)});
         sqLiteDatabase.close();
     }
 

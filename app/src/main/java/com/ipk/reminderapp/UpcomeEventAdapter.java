@@ -104,7 +104,7 @@ public class UpcomeEventAdapter extends RecyclerView.Adapter<UpcomeEventAdapter.
                             case R.id.upcome_delete:
                                 AlertDialog.Builder builder = new AlertDialog.Builder(context);
                                 builder.setTitle("Uyarı!");
-                                builder.setMessage(event.getLabel()+ " - silinsin mi?");
+                                builder.setMessage(event.getLabel()+ " - ve tekrar eden etkinlikler(varsa) silinsin mi?");
                                 builder.setCancelable(false);
 
                                 builder.setPositiveButton("Evet", new DialogInterface.OnClickListener() {
@@ -118,6 +118,7 @@ public class UpcomeEventAdapter extends RecyclerView.Adapter<UpcomeEventAdapter.
 
                                         db = new UpcomeEventDatabase(context);
                                         new UpcomeEventDao().deleteEvent(db, event.getEventID());
+                                        //TODO: diğerleri de silinmeli
                                     }
                                 });
 

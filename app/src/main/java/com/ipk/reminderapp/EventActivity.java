@@ -228,7 +228,7 @@ public class EventActivity extends AppCompatActivity {
                 "",
                 eventFreq.getSelectedItemPosition(),
                 eventLoc.getText().toString(),0);
-        int id=new UpcomeEventDao().addEvent(db, event, 0);
+        int id=new UpcomeEventDao().addEvent(db, event);
         Toast.makeText(getApplicationContext(),id+ " numarası ile kaydedildi",Toast.LENGTH_SHORT).show();
         //TODO: if(event==-1)
         //repeatCount
@@ -271,10 +271,10 @@ public class EventActivity extends AppCompatActivity {
                 UpcomeEvent newEvent = new UpcomeEvent(0, parentEvent.getType(),
                         parentEvent.getLabel(), parentEvent.getContent(),
                         format.format(start.getTime()), parentEvent.getStartTime(),
-                        end.toString(), parentEvent.getEndTime(),
+                        format.format(end.getTime()), parentEvent.getEndTime(),
                         parentEvent.getRemindTime(),
                         0, parentEvent.getAddress(), parentEvent.getEventID());
-                int id=new UpcomeEventDao().addEvent(db, newEvent, parentEvent.getEventID());
+                int id=new UpcomeEventDao().addEvent(db, newEvent);
                 newEvent.setEventID(id);
             }
         }catch (Exception e){
@@ -283,6 +283,8 @@ public class EventActivity extends AppCompatActivity {
     }
 
     public void updateEvent(){
+        //önce eski repeatleri sil
+        new UpcomeEventDao().deleteRepeatedEvent(db,getIntent().getIntExtra("eventID",0));
         UpcomeEvent event= new UpcomeEvent(getIntent().getIntExtra("eventID",0),eventType.getSelectedItemPosition(),
                 header.getText().toString(),content.getText().toString(),
                 startDate.getText().toString(),startTime.getText().toString(),
@@ -292,6 +294,10 @@ public class EventActivity extends AppCompatActivity {
                 eventLoc.getText().toString(), getIntent().getIntExtra("parentEvent",0));
         new UpcomeEventDao().updateEvent(db,getIntent().getIntExtra("eventID",0),event,getIntent().getIntExtra("parentEvent",0));
         Toast.makeText(getApplicationContext(),+ getIntent().getIntExtra("eventID",0)+" numarası ile güncelendi",Toast.LENGTH_SHORT).show();
+        if(eventFreq.getSelectedItemPosition()!=0){
+            addRepeatedEvent(event,eventFreq.getSelectedItemPosition());
+        }
+       // getIntent().getIntExtra("enventFreq", 0);
     }
 
     @Override
